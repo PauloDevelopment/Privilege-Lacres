@@ -2,12 +2,13 @@ from flask import Flask
 from db import init_db
 
 def create_app():
+
+    from controller.empresa_controller import empresa_bp
+
     app = Flask(__name__)
     init_db(app)
-
-    @app.route("/")
-    def hello():
-        return {"message": "Hello, World!"}
+    
+    app.register_blueprint(empresa_bp, url_prefix="/empresas")
     
     return app
 
