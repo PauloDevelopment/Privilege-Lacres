@@ -2,14 +2,15 @@
 const cnpj = document.getElementById('cnpj');
 const telefone = document.getElementById('telefone');
 
+let cnpjMask, telefoneMask;
+
 if (cnpj) {
-    IMask(cnpj, { mask: '00.000.000/0000-00' });
+    cnpjMask = IMask(cnpj, { mask: '00.000.000/0000-00' });
 }
 
 if (telefone) {
-    IMask(telefone, { mask: '(00) 00000-0000' });
+    telefoneMask = IMask(telefone, { mask: '(00) 00000-0000' });
 }
-
 
 // Funções de Alternância de Tela
 function showForm(modo) {
@@ -31,11 +32,20 @@ function showForm(modo) {
     } else {
         title.innerText = "Nova Empresa";
         btn.innerHTML = '<i class="fa-solid fa-plus me-2"></i>Salvar Empresa';
+
+        // Limpa campos ao criar nova empresa
+        empresaEditando = null;
+        document.getElementById('nome').value = '';
+        document.getElementById('ie').value = '';
+        document.getElementById('email').value = '';
+
+        // Limpa valores das máscaras
+        if (cnpjMask) cnpjMask.value = '';
+        if (telefoneMask) telefoneMask.value = '';
     }
 }
 
 function showList() {
-
     const list = document.getElementById('section-list');
     const form = document.getElementById('section-form');
 
