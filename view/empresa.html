@@ -135,7 +135,7 @@
 
                             <div class="col-md-12">
                                 <label class="form-label small fw-bold">
-                                    Email *
+                                    E-mail *
                                 </label>
                                 <input id="email"
                                     type="email"
@@ -150,7 +150,8 @@
                                     Cancelar
                                 </button>
                                 <button type="submit"
-                                        class="btn btn-dark px-4">
+                                        class="btn btn-dark px-4"
+                                        id="btn-submit">
                                     Salvar Empresa
                                 </button>
                             </div>
@@ -172,6 +173,25 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- MODAL DE CONFIRMAÇÃO -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                Deseja realmente excluir essa empresa?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="confirm-delete-btn" class="btn btn-danger">Excluir</button>
+            </div>
+            </div>
+        </div>
         </div>
 
         <!-- Bootstrap JS -->
