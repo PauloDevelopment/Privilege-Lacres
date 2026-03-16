@@ -4,8 +4,6 @@ Aplicação CRUD de empresas (gestão de cadastro) em Flask + SQLAlchemy + MySQL
 
 ## 👥 Integrantes do Projeto
 
-## 👥 Integrantes do Projeto
-
 - **Paulo Henrique Pires Cordeiro** — 2402602  
 - **Ronaldo Filgueira Cavalcante** — 2403661  
 - **Maycon Pereira Ribeiro** — 2402929  
