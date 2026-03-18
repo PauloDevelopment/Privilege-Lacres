@@ -7,6 +7,7 @@ class Empresa(db.Model):
     __tablename__ = 'empresas'
 
     id_empresa = Column(Integer, primary_key=True, autoincrement=True)
+    razao_social = Column(String(50), nullable=False)
     nome_comprador = Column(String(50), nullable=False)
     telefone = Column(String(11), nullable=False)
     email = Column(String(50), nullable=False)
@@ -17,6 +18,7 @@ class Empresa(db.Model):
     def to_dict(self):
         return{
             'id_empresa': self.id_empresa,
+            'Razão Social': self.razao_social,
             'nome_comprador': self.nome_comprador,
             'telefone': self.telefone,
             'email': self.email,

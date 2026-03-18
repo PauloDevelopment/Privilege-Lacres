@@ -39,7 +39,7 @@ def listar_empresa(id_empresa):
 @empresa_bp.route('/', methods=['POST'])
 def criar_empresa():
     data =  request.json
-    obrigatorio = ['nome_comprador', 'telefone', 'email', 'cnpj', 'ie']
+    obrigatorio = ['razao_social', 'nome_comprador', 'telefone', 'email', 'cnpj', 'ie']
 
     for campo in obrigatorio:
         if not data.get(campo):
@@ -68,6 +68,7 @@ def criar_empresa():
             }), 400
         
         novaEmpresa = Empresa(
+            razao_social = data.get('razao_social'),
             nome_comprador = data.get('nome_comprador'),
             telefone = telefone,
             email = data.get('email'),
@@ -122,6 +123,7 @@ def atualizar_empresa(id_empresa):
         if cnpj_existente and cnpj_existente.id_empresa != id_empresa:
             return jsonify({'error': 'CNPJ já cadastrado!'}), 400
         
+        empresa.razao_social = data.get('razao_social', empresa.razao_social)
         empresa.telefone = telefone
         empresa.cnpj = cnpj
         empresa.nome_comprador = data.get('nome_comprador', empresa.nome_comprador)

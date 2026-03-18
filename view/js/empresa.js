@@ -36,11 +36,12 @@ async function carregarEmpresas() {
 
                 <div class="d-flex align-items-center mb-3">
                     <i class="fa-solid fa-building text-primary me-2"></i>
-                    <span class="fw-bold">${e.nome_comprador}</span>
+                    <span class="fw-bold">${e.razao_social}</span>
                 </div>
 
                 <div class="small text-muted mb-3">
                     <p class="mb-1"><strong>ID Empresa:</strong> ${e.id_empresa}</p>
+                    <p class="mb-1"><strong>Nome Comprador:</strong> ${e.nome_comprador}</p>
                     <p class="mb-1"><strong>CNPJ:</strong> ${e.cnpj}</p>
                     <p class="mb-1"><strong>Inscrição Estadual:</strong> ${e.ie}</p>
                     <p class="mb-1"><strong>Telefone:</strong> ${e.telefone}</p>
@@ -70,7 +71,8 @@ async function salvarEmpresa(event) {
     event.preventDefault();
 
     const data = {
-        nome_comprador: document.getElementById("nome").value,
+        razao_social: document.getElementById("razao_social").value,
+        nome_comprador: document.getElementById("nome_comprador").value,
         telefone: document.getElementById("telefone").value.replace(/\D/g,""),
         email: document.getElementById("email").value,
         cnpj: document.getElementById("cnpj").value.replace(/\D/g,""),
@@ -112,7 +114,8 @@ async function editarEmpresa(id){
 
     empresaEditando = id;
 
-    document.getElementById("nome").value = empresa.nome_comprador;
+    document.getElementById("razao_social").value = empresa.razao_social
+    document.getElementById("nome_comprador").value = empresa.nome_comprador;
     document.getElementById("cnpj").value = empresa.cnpj;
     document.getElementById("telefone").value = empresa.telefone;
     document.getElementById("email").value = empresa.email;

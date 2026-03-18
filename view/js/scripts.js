@@ -35,7 +35,8 @@ function showForm(modo) {
 
         // Limpa campos ao criar nova empresa
         empresaEditando = null;
-        document.getElementById('nome').value = '';
+        document.getElementById('razao_social').value = '';
+        document.getElementById('nome_comprador').value = '';
         document.getElementById('ie').value = '';
         document.getElementById('email').value = '';
 
