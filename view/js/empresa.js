@@ -114,7 +114,7 @@ async function editarEmpresa(id){
 
     empresaEditando = id;
 
-    document.getElementById("razao_social").value = empresa.razao_social
+    document.getElementById("razao_social").value = empresa.razao_social;
     document.getElementById("nome_comprador").value = empresa.nome_comprador;
     document.getElementById("cnpj").value = empresa.cnpj;
     document.getElementById("telefone").value = empresa.telefone;
