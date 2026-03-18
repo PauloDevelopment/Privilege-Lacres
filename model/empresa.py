@@ -18,7 +18,7 @@ class Empresa(db.Model):
     def to_dict(self):
         return{
             'id_empresa': self.id_empresa,
-            'Razão Social': self.razao_social,
+            'razao_social': self.razao_social,
             'nome_comprador': self.nome_comprador,
             'telefone': self.telefone,
             'email': self.email,
