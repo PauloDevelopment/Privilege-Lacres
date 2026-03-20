@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from model.pedidos import Pedido
-from model.items_pedido import ItemPedido
+from model.itens_pedido import ItemPedido
 from db import db
 from datetime import datetime
 

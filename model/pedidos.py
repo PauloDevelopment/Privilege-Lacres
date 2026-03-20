@@ -35,3 +35,19 @@ class Pedido(db.Model):
     def soma_total(self):
         return sum(item.soma for item in self.itens)
     
+    def to_dict(self):
+        return {
+            'pedido_id': self.pedido_id,
+            'data': self.data.strftime("%d/%m/%Y") if self.data else None,
+            'numero_pedido': self.numero_pedido,
+            'nf': self.nf,
+            'total_nf': self.total_nf,
+            'vencimento': self.vencimento.strftime("%d/%m/%Y") if self.vencimento else None,
+            'data_entrega': self.data_entrega.strftime("%d/%m/%Y") if self.data_entrega else None,
+            'status': self.status,
+            'id_empresa': self.id_empresa,
+            'itens': [item.to_dict() for item in self.itens]
+        }
+    
+    
+    

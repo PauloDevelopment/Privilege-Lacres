@@ -24,3 +24,13 @@ class ItemPedido(db.Model):
     @property
     def soma(self):
         return self.quantidade * self.valor_milheiro
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'pedido_id': self.pedido_id,
+            'produto': self.produto,
+            'quantidade': self.quantidade,
+            'valor_milheiro': self.valor_milheiro,
+            'soma': self.soma
+        }
