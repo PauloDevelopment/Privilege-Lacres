@@ -11,7 +11,7 @@ class ItemPedido(db.Model):
 
     pedido_id = db.Column(
         db.Integer,
-        db.ForeignKey('pedidos.id'),
+        db.ForeignKey('pedidos.pedido_id'),
         nullable=False
     )
 
