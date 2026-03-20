@@ -52,3 +52,22 @@ body {
     background-color: #fff;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
 }
+
+/* style.css */
+body { 
+    background-color: #f8f9fa; 
+    font-family: 'Segoe UI', sans-serif; 
+}
+
+.card { 
+    border-radius: 12px; 
+    border: none; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+}
+
+.btn-dark { 
+    background-color: #1a1d21; 
+    border-radius: 8px; 
+}
+
+/* Adicione o restante dos seus estilos aqui... */

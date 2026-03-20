@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from db import db
-from model.pedidos import Pedido
 from datetime import *
 
 class Empresa(db.Model):
@@ -16,7 +15,7 @@ class Empresa(db.Model):
     ie = Column(String(100), nullable=False)
     data_cadastro = Column(DateTime)
 
-    pedidos = db.relationship('Pedido', backref='empresa', lazy=True)
+    pedidos = db.relationship('Pedido', back_populates='empresa')
 
     def to_dict(self):
         return{

@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from db import init_db
+from controller.pedido_controller import pedido_bp
 from datetime import datetime
 
 def create_app():
@@ -10,6 +11,7 @@ def create_app():
     init_db(app)
 
     app.register_blueprint(empresa_bp, url_prefix="/empresas")
+    app.register_blueprint(pedido_bp, url_prefix='/pedidos')
 
     @app.route("/")
     def index():

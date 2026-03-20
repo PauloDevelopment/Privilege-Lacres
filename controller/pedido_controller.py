@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, request
 from sqlalchemy.exc import SQLAlchemyError
 from model.pedidos import Pedido
 from model.itens_pedido import ItemPedido
@@ -6,6 +6,11 @@ from db import db
 from datetime import datetime
 
 pedido_bp = Blueprint('pedido_bp', __name__)
+
+@pedido_bp.route('/view') # Mude para /view
+def pedidos_page():
+    # Isso vai buscar o arquivo na pasta 'view' que você configurou no app.py
+    return render_template('pedidos.html')
 
 
 @pedido_bp.route('/', methods=['POST'])

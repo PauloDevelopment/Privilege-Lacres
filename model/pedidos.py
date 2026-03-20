@@ -1,16 +1,15 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from db import db
-from model.empresa import Empresa
-from model.itens_pedido import ItemPedido
 from datetime import *
 
 class Pedido(db.Model):
     __tablename__ = 'pedidos'
 
     pedido_id = db.Column(db.Integer, primary_key=True)
+    
 
-    data = db.Column(db.Date, default=datetime.utcnow)  # DATA DO PEDIDO
+    data = db.Column(db.Date, default=date.today)
     numero_pedido = db.Column(db.String(50), nullable=False) 
 
     nf = db.Column(db.String(50))  # NOTA FISCAL
@@ -21,13 +20,8 @@ class Pedido(db.Model):
 
     status = db.Column(db.String(20))
 
-    #CHAVE ESTRANGEIRA PARA EMPRESA RELACIONAMENTO DE 1 PEDIDO PARA 1 EMPRESA
-    id_empresa = db.Column(
-        db.Integer,
-        db.ForeignKey('empresas.id_empresa'),
-        nullable=False
-    )
-
+    empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id_empresa'))
+    empresa = db.relationship('Empresa', back_populates='pedidos')
     itens = db.relationship('ItemPedido', backref='pedido', lazy=True)
 
     ## RETORNA A SOMA DE QUANTIDADE X MILEIRO DE CADA ITEM
@@ -45,7 +39,7 @@ class Pedido(db.Model):
             'vencimento': self.vencimento.strftime("%d/%m/%Y") if self.vencimento else None,
             'data_entrega': self.data_entrega.strftime("%d/%m/%Y") if self.data_entrega else None,
             'status': self.status,
-            'id_empresa': self.id_empresa,
+            'id_empresa': self.empresa_id,
             'itens': [item.to_dict() for item in self.itens]
         }
     

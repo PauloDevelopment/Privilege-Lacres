@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from db import db
-from model.pedidos import Pedido
 from datetime import *
 
 class ItemPedido(db.Model):
