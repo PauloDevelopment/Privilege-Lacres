@@ -12,6 +12,38 @@
 </head>
 <body>
 
+    <body>
+        <div class="container-fluid">
+            <header class="main-header d-flex align-items-center px-4 py-3">
+                <div class="logo-area d-flex align-items-center">
+                    <div class="icon-box me-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
+                        <small class="text-danger">Sistema de Gestão</small>
+                    </div>
+                </div>
+
+                <nav class="ms-5 d-flex gap-4">
+                    <a href="#" class="nav-link text-muted">
+                        <i class="fa-solid fa-table-cells-large me-1"></i>
+                        Dashboard
+                    </a>
+                    <a href="#"
+                    onclick="showList()"
+                    class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
+                        <i class="fa-solid fa-building me-1"></i>
+                        Empresas
+                    </a>
+                    <a href="{{ url_for('pedido_bp.pedidos_page') }}" class="nav-link text-muted">
+                    <i class="fa-solid fa-file-lines me-1"></i>
+                        Pedidos
+                    </a>
+                </nav>
+            </header>
+
+
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
