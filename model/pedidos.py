@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from db import db
 from datetime import *
@@ -8,6 +8,7 @@ class Pedido(db.Model):
 
     pedido_id = db.Column(db.Integer, primary_key=True)
     
+    id_empresa = Column(Integer, ForeignKey('empresas.id_empresa'), nullable=False)
 
     data = db.Column(db.Date, default=date.today)
     numero_pedido = db.Column(db.String(50), nullable=False) 
@@ -20,9 +21,9 @@ class Pedido(db.Model):
 
     status = db.Column(db.String(20))
 
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id_empresa'))
-    empresa = db.relationship('Empresa', back_populates='pedidos')
-    itens = db.relationship('ItemPedido', backref='pedido', lazy=True)
+
+    empresa = relationship('Empresa', back_populates='pedidos')
+    itens = relationship('ItemPedido', backref='pedido', cascade="all, delete-orphan")
 
     ## RETORNA A SOMA DE QUANTIDADE X MILEIRO DE CADA ITEM
     @property
@@ -39,7 +40,8 @@ class Pedido(db.Model):
             'vencimento': self.vencimento.strftime("%d/%m/%Y") if self.vencimento else None,
             'data_entrega': self.data_entrega.strftime("%d/%m/%Y") if self.data_entrega else None,
             'status': self.status,
-            'id_empresa': self.empresa_id,
+            'id_empresa': self.id_empresa,
+            'total_pedido': self.soma_total,
             'itens': [item.to_dict() for item in self.itens]
         }
     

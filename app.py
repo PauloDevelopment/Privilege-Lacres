@@ -6,7 +6,7 @@ from datetime import datetime
 def create_app():
     from controller.empresa_controller import empresa_bp
 
-    app = Flask(__name__, template_folder="view", static_folder="view")
+    app = Flask(__name__, template_folder="view", static_folder="view/static")
 
     init_db(app)
 
@@ -16,6 +16,10 @@ def create_app():
     @app.route("/")
     def index():
         return render_template("empresa.html")
+    
+    @app.route("/pedidos-view")
+    def pedidos_view():
+        return render_template("pedidos.html")
 
     return app
 

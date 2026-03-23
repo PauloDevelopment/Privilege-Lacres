@@ -13,6 +13,12 @@ def pedidos_page():
     return render_template('pedidos.html')
 
 
+def parse_date(value):
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date() if value else None
+    except ValueError:
+        return None
+    
 @pedido_bp.route('/', methods=['POST'])
 def criar_pedido():
     data = request.json
@@ -26,22 +32,23 @@ def criar_pedido():
         novo_pedido = Pedido(
             numero_pedido=data.get('numero_pedido'),
             nf=data.get('nf'),
-            vencimento=data.get('vencimento'),
-            data_entrega=data.get('data_entrega'),
+            total_nf=float(data.get('total_nf')) if data.get('total_nf') else None,
+            vencimento=parse_date(data.get('vencimento')),
+            data_entrega=parse_date(data.get('data_entrega')),
             status=data.get('status'),
-            empresa_id=data.get('empresa_id'),
-            data=datetime.utcnow()
+            id_empresa=int(data.get('id_empresa')),
+            data=parse_date(data.get('data'))  
         )
 
         db.session.add(novo_pedido)
         db.session.flush()
 
         for item in itens:
-            if not item.get('produto') or not item.get('quantidade') or not item.get('valor_milheiro'):
+            if item.get('produto') is None or item.get('quantidade') is None or item.get('valor_milheiro') is None:
                 return jsonify({'error': 'Item incompleto!'}), 400
 
             novo_item = ItemPedido(
-                pedido_id=novo_pedido.id,
+                pedido_id=novo_pedido.pedido_id,
                 produto=item.get('produto'),
                 quantidade=int(item.get('quantidade')),
                 valor_milheiro=float(item.get('valor_milheiro'))
@@ -53,46 +60,81 @@ def criar_pedido():
 
         return jsonify({
             'message': 'Pedido criado com sucesso!',
-            'id_pedido': novo_pedido.id
+            'pedido': novo_pedido.to_dict()  
         }), 201
 
     except SQLAlchemyError:
         db.session.rollback()
         return jsonify({'error': 'Erro ao salvar pedido.'}), 500
 
-    except Exception:
-        return jsonify({'error': 'Erro inesperado no servidor.'}), 500
+    except Exception as e:
+        return jsonify({'error': f'Erro inesperado: {str(e)}'}), 500
+    
+@pedido_bp.route('/<int:pedido_id>', methods=['PUT'])
+def atualizar_pedido(pedido_id):
+    data = request.json
 
-
-@pedido_bp.route('/<int:id_pedido>', methods=['GET'])
-def buscar_pedido(id_pedido):
     try:
-        pedido = db.session.query(Pedido).filter_by(id=id_pedido).first()
+        pedido = db.session.query(Pedido).filter_by(pedido_id=pedido_id).first()
 
         if not pedido:
             return jsonify({'error': 'Pedido não encontrado!'}), 404
 
+      
+        pedido.numero_pedido = data.get('numero_pedido')
+        pedido.nf = data.get('nf')
+        pedido.total_nf = float(data.get('total_nf')) if data.get('total_nf') else None
+        pedido.vencimento = parse_date(data.get('vencimento'))
+        pedido.data_entrega = parse_date(data.get('data_entrega'))
+        pedido.status = data.get('status')
+        pedido.id_empresa = int(data.get('id_empresa'))
+        pedido.data = parse_date(data.get('data'))
+
+    
+        pedido.itens.clear()
+
+     
+        itens = data.get('itens', [])
+
+        if not itens or len(itens) == 0:
+            return jsonify({'error': 'Pedido deve conter ao menos 1 item!'}), 400
+
+        for item in itens:
+            if item.get('produto') is None or item.get('quantidade') is None or item.get('valor_milheiro') is None:
+                return jsonify({'error': 'Item incompleto!'}), 400
+
+            novo_item = ItemPedido(
+                produto=item.get('produto'),
+                quantidade=int(item.get('quantidade')),
+                valor_milheiro=float(item.get('valor_milheiro'))
+            )
+
+            pedido.itens.append(novo_item)
+
+        db.session.commit()
+
         return jsonify({
-            'id': pedido.id,
-            'numero_pedido': pedido.numero_pedido,
-            'nf': pedido.nf,
-            'empresa_id': pedido.empresa_id,
-            'data': pedido.data.strftime("%d/%m/%Y") if pedido.data else None,
-            'vencimento': pedido.vencimento.strftime("%d/%m/%Y") if pedido.vencimento else None,
-            'data_entrega': pedido.data_entrega.strftime("%d/%m/%Y") if pedido.data_entrega else None,
-            'status': pedido.status,
-            'total_pedido': pedido.soma_total,
-            'itens': [
-                {
-                    'id': item.id,
-                    'produto': item.produto,
-                    'quantidade': item.quantidade,
-                    'valor_milheiro': item.valor_milheiro,
-                    'total_item': item.soma
-                }
-                for item in pedido.itens
-            ]
+            'message': 'Pedido atualizado com sucesso!',
+            'pedido': pedido.to_dict()
         }), 200
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({'error': 'Erro ao atualizar pedido.'}), 500
+
+    except Exception as e:
+        return jsonify({'error': f'Erro inesperado: {str(e)}'}), 500
+
+
+@pedido_bp.route('/<int:pedido_id>', methods=['GET'])
+def buscar_pedido(pedido_id):
+    try:
+        pedido = db.session.query(Pedido).filter_by(pedido_id=pedido_id).first()
+
+        if not pedido:
+            return jsonify({'error': 'Pedido não encontrado!'}), 404
+
+        return jsonify(pedido.to_dict()), 200
 
     except SQLAlchemyError:
         db.session.rollback()
@@ -103,24 +145,23 @@ def buscar_pedido(id_pedido):
 def listar_pedidos():
     pedidos = db.session.query(Pedido).all()
 
-    resultado = []
-    for pedido in pedidos:
-        resultado.append({
-            'id': pedido.id,
-            'numero_pedido': pedido.numero_pedido,
-            'empresa_id': pedido.empresa_id,
-            'data': pedido.data.strftime("%d/%m/%Y") if pedido.data else None,
-            'status': pedido.status,
-            'total_pedido': pedido.soma_total
-        })
-
-    return jsonify(resultado), 200
+    return jsonify([
+        {
+            'pedido_id': p.pedido_id,
+            'numero_pedido': p.numero_pedido,
+            'id_empresa': p.id_empresa,
+            'data': p.data.strftime("%d/%m/%Y") if p.data else None,
+            'status': p.status,
+            'total': p.soma_total
+        }
+        for p in pedidos
+    ]), 200
 
 
 @pedido_bp.route('/<int:id_pedido>', methods=['DELETE'])
 def deletar_pedido(id_pedido):
     try:
-        pedido = db.session.query(Pedido).filter_by(id=id_pedido).first()
+        pedido = db.session.query(Pedido).filter_by(pedido_id=id_pedido).first()
 
         if not pedido:
             return jsonify({'error': 'Pedido não encontrado!'}), 404

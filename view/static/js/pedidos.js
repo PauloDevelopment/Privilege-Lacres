@@ -1,5 +1,7 @@
+console.log("JS carregado");
 // Configuração da URL base do seu servidor Flask
-const API_BASE_URL = 'http://127.0.0.1:5000'; 
+const API_BASE_URL = 'http://localhost:5000'; 
+
 
 // Inicialização ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +13,23 @@ document.addEventListener('DOMContentLoaded', () => {
  * 1. LISTAGEM DE PEDIDOS (READ)
  * Busca os pedidos no Flask e preenche a tabela
  */
+async function excluirPedido(id) {
+    if (!confirm("Tem certeza que deseja excluir este pedido?")) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/pedidos/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            listarPedidos();
+        } else {
+            alert("Erro ao excluir pedido.");
+        }
+    } catch (error) {
+        console.error("Erro ao excluir:", error);
+    }
+}
 async function listarPedidos() {
     try {
         const response = await fetch(`${API_BASE_URL}/pedidos`);
@@ -21,7 +40,7 @@ async function listarPedidos() {
 
         pedidos.forEach(p => {
             // Calcula o total somando os itens (usando a lógica do seu to_dict)
-            const totalCalculado = p.itens.reduce((acc, item) => acc + item.soma, 0);
+            const totalCalculado = p.total || 0;
             
             // Define a cor do badge de status baseada no seu anexo
             const statusClass = p.status === 'Pendente' ? 'bg-warning text-dark' : 
@@ -175,7 +194,7 @@ async function carregarEmpresasSelect() {
         empresas.forEach(emp => {
             const opt = document.createElement('option');
             opt.value = emp.id_empresa;
-            opt.textContent = emp.nome_fantasia || `Empresa ${emp.id_empresa}`;
+            opt.textContent = emp.razao_social;
             select.appendChild(opt);
         });
     } catch (err) {

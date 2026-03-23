@@ -147,3 +147,8 @@ async function deletarEmpresa(id) {
         carregarEmpresas();
     });
 }
+
+window.showForm = showForm;
+window.showList = showList;
+window.editarEmpresa = editarEmpresa;
+window.deletarEmpresa = deletarEmpresa;
