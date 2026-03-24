@@ -7,9 +7,8 @@ from datetime import datetime
 
 pedido_bp = Blueprint('pedido_bp', __name__)
 
-@pedido_bp.route('/view') # Mude para /view
+@pedido_bp.route('/view')
 def pedidos_page():
-    # Isso vai buscar o arquivo na pasta 'view' que você configurou no app.py
     return render_template('pedidos.html')
 
 

@@ -173,3 +173,32 @@ def deletar_empresa(id_empresa):
         return jsonify({
             'error': 'Erro inesperado no servidor.',
         }), 500
+    
+@empresa_bp.route('/<int:id_empresa>/pedidos', methods=['GET'])
+def listar_pedidos_empresa(id_empresa):
+    try:
+        empresa = db.session.query(Empresa).filter_by(id_empresa=id_empresa).first()
+
+        if not empresa:
+            return jsonify({'error': 'Empresa não encontrada!'}), 404
+
+        pedidos = [{
+            'pedido_id': p.pedido_id,
+            'numero_pedido': p.numero_pedido,
+            'data': p.data.strftime("%d/%m/%Y") if p.data else None,
+            'status': p.status,
+            'total_pedido': p.soma_total,
+            'nf': p.nf,
+            'vencimento': p.vencimento.strftime("%d/%m/%Y") if p.vencimento else None,
+            'data_entrega': p.data_entrega.strftime("%d/%m/%Y") if p.data_entrega else None,
+        } for p in empresa.pedidos]
+
+        return jsonify({
+            'empresa': empresa.razao_social,
+            'total': len(pedidos),
+            'pedidos': pedidos
+        }), 200
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({'error': 'Erro ao buscar pedidos.'}), 500
