@@ -29,46 +29,64 @@ async function carregarEmpresas() {
     const container = document.getElementById("empresa-list");
     container.innerHTML = "";
 
-    empresas.forEach(e => {
-        container.innerHTML += `
-        <div class="col-md-6 col-lg-4">
-            <div class="card p-3 border-0 shadow-sm">
+empresas.forEach(e => {
+    container.innerHTML += `
+    <div class="col-md-6 col-lg-4">
+        <div class="card p-3 border-0 shadow-sm">
 
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fa-solid fa-building text-primary me-2"></i>
-                    <span class="fw-bold text-primary" 
-                                    style="cursor:pointer;" 
-                                    onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
-                                    title="Ver pedidos desta empresa">
-                                                    ${e.razao_social}
-                                                              </span>
-                </div>
+            <div class="d-flex align-items-center mb-3">
+                <i class="fa-solid fa-building text-primary me-2"></i>
+                <span class="fw-bold text-primary" 
+                      style="cursor:pointer;" 
+                      onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
+                      title="Ver pedidos desta empresa">
+                    ${e.razao_social}
+                </span>
+            </div>
 
-                <div class="small text-muted mb-3">
-                    <p class="mb-1"><strong>ID Empresa:</strong> ${e.id_empresa}</p>
-                    <p class="mb-1"><strong>Nome Comprador:</strong> ${e.nome_comprador}</p>
-                    <p class="mb-1"><strong>CNPJ:</strong> ${e.cnpj}</p>
-                    <p class="mb-1"><strong>Inscrição Estadual:</strong> ${e.ie}</p>
-                    <p class="mb-1"><strong>Telefone:</strong> ${e.telefone}</p>
-                    <p class="mb-1"><strong>E-mail:</strong> ${e.email}</p>
-                    <p class="mb-1"><strong>Data de Cadastro:</strong> ${e.data_cadastro}</p>
-                </div>
+            <div class="small text-muted mb-3">
+                <p class="mb-1"><strong>ID Empresa:</strong> ${e.id_empresa}</p>
+                <p class="mb-1"><strong>Nome Comprador:</strong> ${e.nome_comprador}</p>
+                <p class="mb-1"><strong>CNPJ:</strong> ${formatarCNPJ(e.cnpj)}</p>
+                <p class="mb-1"><strong>Inscrição Estadual:</strong> ${e.ie}</p>
+                <p class="mb-1"><strong>Telefone:</strong> ${formatarTelefone(e.telefone)}</p>
+                <p class="mb-1"><strong>E-mail:</strong> ${e.email}</p>
+                <p class="mb-1"><strong>Data de Cadastro:</strong> ${e.data_cadastro}</p>
 
-                <div class="d-flex border-top pt-3 justify-content-around">
-                    <button onclick="editarEmpresa(${e.id_empresa})"
-                        class="btn btn-link text-success text-decoration-none small">
-                        <i class="fa-solid fa-pen me-1"></i> Editar
-                    </button>
+                ${e.rua || e.cidade || e.estado || e.cep ? `
+                <hr class="my-2">
+                <p class="mb-1 fw-bold text-dark">
+                    <i class="fa-solid fa-location-dot me-1 text-primary"></i>Endereço
+                </p>
+                ${e.rua    ? `<p class="mb-1"><strong>Rua:</strong> ${e.rua}</p>` : ''}
+                ${e.cidade ? `<p class="mb-1"><strong>Cidade:</strong> ${e.cidade}</p>` : ''}
+                ${e.estado ? `<p class="mb-1"><strong>Estado:</strong> ${e.estado}</p>` : ''}
+                ${e.cep    ? `<p class="mb-1"><strong>CEP:</strong> ${formatarCEP(e.cep)}</p>` : ''}
+                ` : ''}
 
-                    <button onclick="deletarEmpresa(${e.id_empresa})"
-                        class="btn btn-link text-danger text-decoration-none small">
-                        <i class="fa-solid fa-trash me-1"></i> Excluir
-                    </button>
-                </div>
+                ${e.observacao ? `
+                <hr class="my-2">
+                <p class="mb-1 fw-bold text-dark">
+                    <i class="fa-solid fa-note-sticky me-1 text-primary"></i>Observação
+                </p>
+                <p class="mb-0 fst-italic">${e.observacao}</p>
+                ` : ''}
+            </div>
+
+            <div class="d-flex border-top pt-3 justify-content-around">
+                <button onclick="editarEmpresa(${e.id_empresa})"
+                    class="btn btn-link text-success text-decoration-none small">
+                    <i class="fa-solid fa-pen me-1"></i> Editar
+                </button>
+                <button onclick="deletarEmpresa(${e.id_empresa})"
+                    class="btn btn-link text-danger text-decoration-none small">
+                    <i class="fa-solid fa-trash me-1"></i> Excluir
+                </button>
             </div>
         </div>
-        `;
-    });
+    </div>
+    `;
+});
 }
 
 // Criar ou editar empresas
@@ -81,7 +99,12 @@ async function salvarEmpresa(event) {
         telefone: document.getElementById("telefone").value.replace(/\D/g,""),
         email: document.getElementById("email").value,
         cnpj: document.getElementById("cnpj").value.replace(/\D/g,""),
-        ie: document.getElementById("ie").value
+        ie: document.getElementById("ie").value,
+        rua: document.getElementById("rua").value,
+        cidade: document.getElementById("cidade").value,
+        estado: document.getElementById("estado").value,
+        cep: document.getElementById("cep").value.replace(/\D/g, ""),
+        observacao: document.getElementById("observacao").value
     };
 
     let url="/empresas";
@@ -125,6 +148,11 @@ async function editarEmpresa(id){
     document.getElementById("telefone").value = empresa.telefone;
     document.getElementById("email").value = empresa.email;
     document.getElementById("ie").value = empresa.ie;
+    document.getElementById("rua").value = empresa.rua || '';
+    document.getElementById("cidade").value = empresa.cidade || '';
+    document.getElementById("estado").value = empresa.estado || '';
+    document.getElementById("cep").value = empresa.cep || '';
+    document.getElementById("observacao").value = empresa.observacao || '';
 
     showForm("editar");
 }
@@ -333,6 +361,14 @@ async function abrirDetalhePedido(pedidoId) {
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+
+            <!-- BOTÃO EDITAR NO RODAPÉ DO MODAL -->
+            <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+                <button class="btn btn-dark px-4"
+                        onclick="editarPedidoDetalhe(${p.pedido_id})">
+                    <i class="fa-solid fa-pen me-2"></i>Editar Pedido
+                </button>
             </div>`;
 
     } catch (err) {
@@ -340,7 +376,36 @@ async function abrirDetalhePedido(pedidoId) {
     }
 }
 
+async function editarPedidoDetalhe(pedidoId) {
+    // Fecha o modal de detalhes
+    bootstrap.Modal.getInstance(
+        document.getElementById('modalDetalhePedido')
+    ).hide();
 
+    // Redireciona para a página de pedidos passando o id via query string
+    window.location.href = `/pedidos/view?editar=${pedidoId}`;
+}
+
+window.editarPedidoDetalhe = editarPedidoDetalhe;
+
+function formatarCNPJ(cnpj) {
+    if (!cnpj || cnpj.length !== 14) return cnpj;
+    return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
+
+function formatarTelefone(tel) {
+    if (!tel) return tel;
+    if (tel.length === 11)
+        return tel.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    if (tel.length === 10)
+        return tel.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    return tel;
+}
+
+function formatarCEP(cep) {
+    if (!cep || cep.length !== 8) return cep;
+    return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+}
 
 
 window.abrirDetalhePedido = abrirDetalhePedido;

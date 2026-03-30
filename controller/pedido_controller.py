@@ -49,7 +49,7 @@ def criar_pedido():
             novo_item = ItemPedido(
                 pedido_id=novo_pedido.pedido_id,
                 produto=item.get('produto'),
-                quantidade=int(item.get('quantidade')),
+                quantidade=float(item.get('quantidade')),
                 valor_milheiro=float(item.get('valor_milheiro'))
             )
 
@@ -104,7 +104,7 @@ def atualizar_pedido(pedido_id):
 
             novo_item = ItemPedido(
                 produto=item.get('produto'),
-                quantidade=int(item.get('quantidade')),
+                quantidade=float(item.get('quantidade')),
                 valor_milheiro=float(item.get('valor_milheiro'))
             )
 

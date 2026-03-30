@@ -16,7 +16,7 @@ class ItemPedido(db.Model):
 
     produto = db.Column(db.String(100), nullable=False)
 
-    quantidade = db.Column(db.Integer, nullable=False)
+    quantidade = db.Column(db.Float, nullable=False)
     valor_milheiro = db.Column(db.Float, nullable=False)
 
     #SOMA DO ITEM NÃO SALVA NO BANCO SO APARECE NA HORA DE EXIBIR O PEDIDO

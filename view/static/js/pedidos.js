@@ -86,7 +86,7 @@ function adicionarLinhaItem(dados = {}) {
             <input type="text" class="form-control campo-produto" placeholder="Produto" value="${dados.produto || ''}" required>
         </div>
         <div class="col-md-2">
-            <input type="number" class="form-control text-center campo-quantidade" placeholder="Qtd" oninput="calcularTotalPedido()" value="${dados.quantidade || 1}" required>
+            <input type="number" step="0.001" class="form-control text-center campo-quantidade" placeholder="Qtd" oninput="calcularTotalPedido()" value="${dados.quantidade || 1}" required>
         </div>
         <div class="col-md-3">
             <input type="number" step="0.01" class="form-control campo-valor" placeholder="Valor Milheiro" oninput="calcularTotalPedido()" value="${dados.valor_milheiro || 0}" required>
@@ -133,7 +133,7 @@ async function salvarPedidoCompleto() {
     // Coleta os itens da lista dinâmica
     const itens = Array.from(document.querySelectorAll('.item-row')).map(linha => ({
         produto: linha.querySelector('.campo-produto').value,
-        quantidade: parseInt(linha.querySelector('.campo-quantidade').value),
+        quantidade: parseFloat(linha.querySelector('.campo-quantidade').value),
         valor_milheiro: parseFloat(linha.querySelector('.campo-valor').value)
     }));
 
@@ -229,3 +229,16 @@ async function editarPedido(id) {
         console.error("Erro ao carregar pedido:", error);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    listarPedidos();
+    carregarEmpresasSelect();
+
+    // Verifica se deve abrir edição direto
+    const params = new URLSearchParams(window.location.search);
+    const editarId = params.get('editar');
+    if (editarId) {
+        // Aguarda o select de empresas carregar antes de abrir
+        setTimeout(() => editarPedido(parseInt(editarId)), 800);
+    }
+});

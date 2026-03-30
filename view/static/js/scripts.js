@@ -39,10 +39,15 @@ function showForm(modo) {
         document.getElementById('nome_comprador').value = '';
         document.getElementById('ie').value = '';
         document.getElementById('email').value = '';
+        document.getElementById('rua').value = '';
+        document.getElementById('cidade').value = '';
+        document.getElementById('estado').value = '';
+        document.getElementById('observacao').value = '';
 
         // Limpa valores das máscaras
         if (cnpjMask) cnpjMask.value = '';
         if (telefoneMask) telefoneMask.value = '';
+        if (cepMask) cepMask.value = '';
     }
 }
 
@@ -54,4 +59,9 @@ function showList() {
 
     list.style.display = 'block';
     form.style.display = 'none';
+}
+
+const cep = document.getElementById('cep');
+if (cep) {
+    IMask(cep, { mask: '00000-000' });
 }
