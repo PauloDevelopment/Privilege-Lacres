@@ -175,9 +175,13 @@ async function deletarEmpresa(id) {
         const response = await fetch(`/empresas/${empresaParaDeletar}`, { method: "DELETE" });
         const result = await response.json();
 
-        showToast(result.message, "success");
-        bsModal.hide();
-        carregarEmpresas();
+        if (response.ok) {
+            showToast(result.message, "success");
+            bsModal.hide();
+            carregarEmpresas();
+        } else {
+            showToast(result.error, "danger");
+        }
     });
 }
 

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 from model.empresa import Empresa
+from model.pedidos import Pedido
 from datetime import datetime
 from db import db
 
@@ -124,8 +125,15 @@ def atualizar_empresa(id_empresa):
 def deletar_empresa(id_empresa):
     try:
         empresa = db.session.query(Empresa).filter_by(id_empresa=id_empresa).first()
+
+        pedido = db.session.query(Pedido).filter_by(id_empresa=id_empresa).first()
+        
         if not empresa:
             return jsonify({'error': 'Empresa não encontrada!'}), 404
+        
+        if pedido:
+            return jsonify({'error': 'Não é possível deletar essa empresa porque tem pedidos vinculados!'}), 409
+        
         db.session.delete(empresa)
         db.session.commit()
         return jsonify({'message': 'Empresa deletada com sucesso!'}), 200
