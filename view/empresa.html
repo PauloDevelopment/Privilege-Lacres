@@ -40,15 +40,17 @@
                         <i class="fa-solid fa-table-cells-large me-1"></i>
                         Dashboard
                     </a>
-                    <a href="#"
+
+                    <a href="/"
                     onclick="showList()"
                     class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
                         <i class="fa-solid fa-building me-1"></i>
                         Empresas
                     </a>
-                   <a href="{{ url_for('pedido_bp.pedidos_page') }}" class="nav-link text-muted">
-                    <i class="fa-solid fa-file-lines me-1"></i>
-                    Pedidos
+
+                    <a href="/pedidos-view" class="nav-link text-muted">
+                        <i class="fa-solid fa-file-lines me-1"></i>
+                        Pedidos
                     </a>
                 </nav>
             </header>
@@ -64,13 +66,14 @@
                                 Gerenciar empresas cadastradas no sistema
                             </p>
                         </div>
+
                         <button class="btn btn-dark btn-save"
                                 onclick="showForm('cadastrar')">
-
                             <i class="fa-solid fa-plus me-2"></i>
                             Nova Empresa
                         </button>
                     </div>
+
                     <div class="row g-4" id="empresa-list"></div>
                 </section>
 
@@ -81,6 +84,7 @@
                                 onclick="showList()">
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
+
                         <div>
                             <h2 id="form-title" class="h4 mb-0">
                                 Nova Empresa
@@ -90,8 +94,10 @@
                             </p>
                         </div>
                     </div>
+
                     <div class="card p-4 border-0 shadow-sm">
                         <form class="row g-3" id="empresa-form">
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">
                                     Razão Social *
@@ -132,6 +138,7 @@
                                     class="form-control"
                                     required>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">
                                     Telefone *
@@ -155,52 +162,68 @@
 
                             <div class="col-12 mt-2">
                                 <hr class="mb-2">
-                                    <p class="small fw-bold text-muted mb-2">
-                                     <i class="fa-solid fa-location-dot me-1"></i>
-                                     Endereço
-                                                            </p>
-                                                            </div>
+                                <p class="small fw-bold text-muted mb-2">
+                                    <i class="fa-solid fa-location-dot me-1"></i>
+                                    Endereço
+                                </p>
+                            </div>
 
-                                                    <div class="col-md-8">
-                                        <label class="form-label small fw-bold">Rua / Logradouro</label>
-                                        <input id="rua" type="text" class="form-control" placeholder="Ex: Rua das Flores, 123">
-                                                </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold">
+                                    CEP
+                                </label>
+                                <input id="cep"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="00000-000">
+                            </div>
 
-                                            <div class="col-md-4">
-                                                <label class="form-label small fw-bold">CEP</label>
-                                    <input id="cep" type="text" class="form-control" placeholder="00000-000">
-                                            </div>
+                            <div class="col-md-7">
+                                <label class="form-label small fw-bold">
+                                    Rua / Logradouro
+                                </label>
+                                <input id="rua"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Ex: Rua das Flores, 123">
+                            </div>
 
-                                                        <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Cidade</label>
-                                        <input id="cidade" type="text" class="form-control">
-                                                    </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold">
+                                    Cidade
+                                </label>
+                                <input id="cidade"
+                                    type="text"
+                                    class="form-control">
+                            </div>
 
-                                                <div class="col-md-6">
-                                 <label class="form-label small fw-bold">Estado (UF)</label>
-                                            <select id="estado" class="form-select">
-                                         <option value="">Selecione...</option>
-                     <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
-                     <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-                     <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
-                    <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
-                    <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
-                    <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
-                    <option>SP</option><option>SE</option><option>TO</option>
-    </select>
-</div>
-                                <div class="col-12 mt-2">
+                            <div class="col-md-1">
+                                <label class="form-label small fw-bold">
+                                    Estado (UF)
+                                </label>
+                                <input id="estado"
+                                    type="text"
+                                    class="form-control"
+                                    maxlength="2">
+                            </div>
+
+                            <div class="col-12 mt-2">
                                 <hr class="mb-2">
-                            <p class="small fw-bold text-muted mb-2">
-                             <i class="fa-solid fa-note-sticky me-1"></i>Observações
-                                                    </p>
-</div>
+                                <p class="small fw-bold text-muted mb-2">
+                                    <i class="fa-solid fa-note-sticky me-1"></i>
+                                    Observações
+                                </p>
+                            </div>
 
-                                            <div class="col-12">
-                                             <label class="form-label small fw-bold">Observação</label>
-                                            <textarea id="observacao" class="form-control" rows="3"
-                                   placeholder="Informações adicionais sobre a empresa..."></textarea>
-</div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">
+                                    Observação
+                                </label>
+                                <textarea id="observacao"
+                                        class="form-control"
+                                        rows="3"
+                                        placeholder="Informações adicionais sobre a empresa..."></textarea>
+                            </div>
 
                             <div class="col-12 mt-4 text-end">
                                 <button type="button"
@@ -208,54 +231,56 @@
                                         onclick="showList()">
                                     Cancelar
                                 </button>
+
                                 <button type="submit"
                                         class="btn btn-dark px-4"
                                         id="btn-submit">
                                     Salvar Empresa
                                 </button>
                             </div>
+
                         </form>
                     </div>
                 </section>
+
             </main>
         </div>
-        <!-- MODAL PEDIDOS DA EMPRESA -->
-<div class="modal fade" id="modalPedidosEmpresa" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h5 class="modal-title mb-0" id="modalPedidosEmpresaTitulo">
-                        Pedidos da Empresa
-                    </h5>
-                    <small class="text-muted" id="modalPedidosEmpresaSubtitulo"></small>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="modalPedidosEmpresaBody">
-                <!-- preenchido via JS -->
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- MODAL DETALHE DO PEDIDO -->
-<div class="modal fade" id="modalDetalhePedido" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h5 class="modal-title mb-0" id="modalDetalheTitulo">Detalhes do Pedido</h5>
-                    <small class="text-muted" id="modalDetalheSubtitulo"></small>
+        <!-- MODAL PEDIDOS DA EMPRESA -->
+        <div class="modal fade" id="modalPedidosEmpresa" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title mb-0" id="modalPedidosEmpresaTitulo">
+                                Pedidos da Empresa
+                            </h5>
+                            <small class="text-muted" id="modalPedidosEmpresaSubtitulo"></small>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalPedidosEmpresaBody"></div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="modalDetalheBody">
-                <!-- preenchido via JS -->
             </div>
         </div>
-    </div>
-</div>
+
+        <!-- MODAL DETALHE DO PEDIDO -->
+        <div class="modal fade" id="modalDetalhePedido" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title mb-0" id="modalDetalheTitulo">
+                                Detalhes do Pedido
+                            </h5>
+                            <small class="text-muted" id="modalDetalheSubtitulo"></small>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="modalDetalheBody"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- TOAST -->
         <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
@@ -272,22 +297,44 @@
         </div>
 
         <!-- MODAL DE CONFIRMAÇÃO -->
-        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal fade"
+            id="confirmModal"
+            tabindex="-1"
+            aria-labelledby="confirmModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">
+                            Confirmação
+                        </h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        Deseja realmente excluir essa empresa?
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <button type="button"
+                                id="confirm-delete-btn"
+                                class="btn btn-danger">
+                            Excluir
+                        </button>
+                    </div>
+
+                </div>
             </div>
-            <div class="modal-body">
-                Deseja realmente excluir essa empresa?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="confirm-delete-btn" class="btn btn-danger">Excluir</button>
-            </div>
-            </div>
-        </div>
         </div>
 
         <!-- Bootstrap JS -->

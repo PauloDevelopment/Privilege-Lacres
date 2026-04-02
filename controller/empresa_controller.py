@@ -4,6 +4,7 @@ from model.empresa import Empresa
 from model.pedidos import Pedido
 from datetime import datetime
 from db import db
+import pytz
 
 empresa_bp = Blueprint('empresa_bp', __name__)
 
@@ -58,7 +59,7 @@ def criar_empresa():
             email=data.get('email'),
             cnpj=cnpj,
             ie=data.get('ie'),
-            data_cadastro=datetime.today(),
+            data_cadastro=datetime.now(pytz.timezone('America/Sao_Paulo')),
             rua=data.get('rua', ''),
             cidade=data.get('cidade', ''),
             estado=data.get('estado', ''),

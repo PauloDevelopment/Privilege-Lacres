@@ -7,11 +7,6 @@ from datetime import datetime
 
 pedido_bp = Blueprint('pedido_bp', __name__)
 
-@pedido_bp.route('/view')
-def pedidos_page():
-    return render_template('pedidos.html')
-
-
 def parse_date(value):
     try:
         return datetime.strptime(value, "%Y-%m-%d").date() if value else None

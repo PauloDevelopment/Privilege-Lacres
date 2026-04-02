@@ -1,7 +1,6 @@
 from flask import Flask, render_template
 from db import init_db
 from controller.pedido_controller import pedido_bp
-from datetime import datetime
 
 def create_app():
     from controller.empresa_controller import empresa_bp

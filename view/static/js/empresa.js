@@ -155,6 +155,7 @@ async function editarEmpresa(id){
     document.getElementById("observacao").value = empresa.observacao || '';
 
     showForm("editar");
+    configurarViaCEP();
 }
 
 // Deletar empresa com modal
@@ -411,10 +412,37 @@ function formatarCEP(cep) {
     return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
 
-
 window.abrirDetalhePedido = abrirDetalhePedido;
 window.abrirPedidosEmpresa = abrirPedidosEmpresa;
 window.showForm = showForm;
 window.showList = showList;
 window.editarEmpresa = editarEmpresa;
 window.deletarEmpresa = deletarEmpresa;
+
+// ViaCEP
+function configurarViaCEP() {
+    const campoCep = document.getElementById("cep");
+    if (!campoCep) return;
+
+    campoCep.addEventListener("blur", async () => {
+        const cep = campoCep.value.replace(/\D/g, "");
+        if (cep.length !== 8) return;
+
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                showToast("CEP não encontrado.", "danger");
+                return;
+            }
+
+            document.getElementById("rua").value    = data.logradouro || '';
+            document.getElementById("cidade").value = data.localidade  || '';
+            document.getElementById("estado").value = data.uf          || '';
+
+        } catch (err) {
+            showToast("Erro ao buscar CEP.", "danger");
+        }
+    });
+}

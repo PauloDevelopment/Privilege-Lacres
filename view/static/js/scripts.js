@@ -1,30 +1,39 @@
-// Configuração das Máscaras
-const cnpj = document.getElementById('cnpj');
-const telefone = document.getElementById('telefone');
+// Variáveis globais das máscaras
+let cnpjMask, telefoneMask, cepMask;
 
-let cnpjMask, telefoneMask;
+// Inicialização quando DOM estiver pronto
+document.addEventListener("DOMContentLoaded", () => {
+    const cnpj = document.getElementById('cnpj');
+    const telefone = document.getElementById('telefone');
+    const cep = document.getElementById('cep');
 
-if (cnpj) {
-    cnpjMask = IMask(cnpj, { mask: '00.000.000/0000-00' });
-}
+    if (cnpj) {
+        cnpjMask = IMask(cnpj, { mask: '00.000.000/0000-00' });
+    }
 
-if (telefone) {
-    telefoneMask = IMask(telefone, { mask: '(00) 00000-0000' });
-}
+    if (telefone) {
+        telefoneMask = IMask(telefone, { mask: '(00) 00000-0000' });
+    }
+
+    if (cep) {
+        cepMask = IMask(cep, { mask: '00000-000' });
+    }
+});
 
 // Funções de Alternância de Tela
 function showForm(modo) {
 
     const list = document.getElementById('section-list');
-    const form = document.getElementById('section-form');
+    const formSection = document.getElementById('section-form');
 
-    if (!list || !form) return;
+    if (!list || !formSection) return;
 
     list.style.display = 'none';
-    form.style.display = 'block';
+    formSection.style.display = 'block';
 
     const title = document.getElementById('form-title');
     const btn = document.getElementById('btn-submit');
+    const form = document.getElementById('empresa-form');
 
     if (modo === 'editar') {
         title.innerText = "Editar Empresa";
@@ -33,22 +42,28 @@ function showForm(modo) {
         title.innerText = "Nova Empresa";
         btn.innerHTML = '<i class="fa-solid fa-plus me-2"></i>Salvar Empresa';
 
-        // Limpa campos ao criar nova empresa
+        // RESET COMPLETO
+        form.reset();
         empresaEditando = null;
-        document.getElementById('razao_social').value = '';
-        document.getElementById('nome_comprador').value = '';
-        document.getElementById('ie').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('rua').value = '';
-        document.getElementById('cidade').value = '';
-        document.getElementById('estado').value = '';
-        document.getElementById('observacao').value = '';
 
-        // Limpa valores das máscaras
-        if (cnpjMask) cnpjMask.value = '';
-        if (telefoneMask) telefoneMask.value = '';
-        if (cepMask) cepMask.value = '';
+        // 🔥 LIMPEZA FORÇADA DAS MÁSCARAS (resolve seu bug)
+        if (cnpjMask) {
+            cnpjMask.value = '';
+            cnpjMask.updateValue();
+        }
+
+        if (telefoneMask) {
+            telefoneMask.value = '';
+            telefoneMask.updateValue();
+        }
+
+        if (cepMask) {
+            cepMask.value = '';
+            cepMask.updateValue();
+        }
     }
+
+    configurarViaCEP();
 }
 
 function showList() {
@@ -59,9 +74,4 @@ function showList() {
 
     list.style.display = 'block';
     form.style.display = 'none';
-}
-
-const cep = document.getElementById('cep');
-if (cep) {
-    IMask(cep, { mask: '00000-000' });
 }

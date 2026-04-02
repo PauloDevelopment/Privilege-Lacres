@@ -3,3 +3,4 @@ Flask-SQLAlchemy==2.5.1
 mysql-connector-python==8.0.33
 Werkzeug==2.0.2
 SQLAlchemy==1.4.49
+pytz==2024.1
