@@ -46,7 +46,7 @@ function showForm(modo) {
         form.reset();
         empresaEditando = null;
 
-        // 🔥 LIMPEZA FORÇADA DAS MÁSCARAS (resolve seu bug)
+        // LIMPEZA FORÇADA DAS MÁSCARAS (resolve seu bug)
         if (cnpjMask) {
             cnpjMask.value = '';
             cnpjMask.updateValue();

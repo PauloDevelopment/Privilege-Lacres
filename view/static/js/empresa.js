@@ -78,6 +78,12 @@ empresas.forEach(e => {
                     class="btn btn-link text-success text-decoration-none small">
                     <i class="fa-solid fa-pen me-1"></i> Editar
                 </button>
+                
+                <button onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
+                    class="btn btn-link text-primary text-decoration-none small">
+                    <i class="fa-solid fa-file-lines me-1"></i> Pedidos
+                </button>
+                
                 <button onclick="deletarEmpresa(${e.id_empresa})"
                     class="btn btn-link text-danger text-decoration-none small">
                     <i class="fa-solid fa-trash me-1"></i> Excluir
@@ -144,15 +150,28 @@ async function editarEmpresa(id){
 
     document.getElementById("razao_social").value = empresa.razao_social;
     document.getElementById("nome_comprador").value = empresa.nome_comprador;
-    document.getElementById("cnpj").value = empresa.cnpj;
-    document.getElementById("telefone").value = empresa.telefone;
     document.getElementById("email").value = empresa.email;
     document.getElementById("ie").value = empresa.ie;
     document.getElementById("rua").value = empresa.rua || '';
     document.getElementById("cidade").value = empresa.cidade || '';
     document.getElementById("estado").value = empresa.estado || '';
-    document.getElementById("cep").value = empresa.cep || '';
     document.getElementById("observacao").value = empresa.observacao || '';
+
+    // Preenche via máscara
+    if (cnpjMask) {
+        cnpjMask.unmaskedValue = empresa.cnpj || '';
+        cnpjMask.updateValue();
+    }
+
+    if (telefoneMask) {
+        telefoneMask.unmaskedValue = empresa.telefone || '';
+        telefoneMask.updateValue();
+    }
+
+    if (cepMask) {
+        cepMask.unmaskedValue = empresa.cep || '';
+        cepMask.updateValue();
+    }
 
     showForm("editar");
     configurarViaCEP();
@@ -388,7 +407,7 @@ async function editarPedidoDetalhe(pedidoId) {
     ).hide();
 
     // Redireciona para a página de pedidos passando o id via query string
-    window.location.href = `/pedidos/view?editar=${pedidoId}`;
+    window.location.href = `/pedidos-view?editar=${pedidoId}`;
 }
 
 window.editarPedidoDetalhe = editarPedidoDetalhe;

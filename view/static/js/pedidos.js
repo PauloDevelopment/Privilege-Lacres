@@ -2,34 +2,55 @@ console.log("JS carregado");
 // Configuração da URL base do seu servidor Flask
 const API_BASE_URL = 'http://localhost:5000'; 
 
+// Toast
+function showToast(message, type = "success") {
+    const toast = document.getElementById("liveToast");
+    const messageBox = document.getElementById("toast-message");
 
-// Inicialização ao carregar a página
-document.addEventListener('DOMContentLoaded', () => {
-    listarPedidos();
-    carregarEmpresasSelect();
-});
+    messageBox.innerText = message;
+    toast.className = `toast align-items-center text-bg-${type} border-0`;
+
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+}
 
 /**
  * 1. LISTAGEM DE PEDIDOS (READ)
  * Busca os pedidos no Flask e preenche a tabela
  */
+let pedidoParaDeletar = null;
+
 async function excluirPedido(id) {
-    if (!confirm("Tem certeza que deseja excluir este pedido?")) return;
+    pedidoParaDeletar = id;
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/pedidos/${id}`, {
-            method: 'DELETE'
-        });
+    const modalEl = document.getElementById("confirmModalPedido");
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
 
-        if (response.ok) {
-            listarPedidos();
-        } else {
-            alert("Erro ao excluir pedido.");
+    // Troca o botão para evitar listeners duplicados
+    const btnConfirm = document.getElementById("confirm-delete-pedido-btn");
+    btnConfirm.replaceWith(btnConfirm.cloneNode(true));
+    const newBtn = document.getElementById("confirm-delete-pedido-btn");
+
+    newBtn.addEventListener("click", async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/pedidos/${pedidoParaDeletar}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                bsModal.hide();
+                showToast("Pedido excluído com sucesso!", "success");
+                listarPedidos();
+            } else {
+                showToast("Erro ao excluir pedido.", "danger");
+            }
+        } catch (error) {
+            console.error("Erro ao excluir:", error);
         }
-    } catch (error) {
-        console.error("Erro ao excluir:", error);
-    }
+    });
 }
+
 async function listarPedidos() {
     try {
         const response = await fetch(`${API_BASE_URL}/pedidos`);
@@ -54,11 +75,11 @@ async function listarPedidos() {
                     <td><span class="badge ${statusClass} px-3">${p.status}</span></td>
                     <td class="text-end fw-bold text-dark">R$ ${totalCalculado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                     <td class="text-center">
-                        <button class="btn btn-sm text-secondary me-2" onclick="editarPedido(${p.pedido_id})">
-                            <i class="bi bi-pencil"></i>
+                        <button class="btn btn-link text-success text-decoration-none small" onclick="editarPedido(${p.pedido_id})">
+                            <i class="fa-solid fa-pen me-1"></i>
                         </button>
-                        <button class="btn btn-sm text-danger" onclick="excluirPedido(${p.pedido_id})">
-                            <i class="bi bi-trash"></i>
+                        <button class="btn btn-link text-danger text-decoration-none small" onclick="excluirPedido(${p.pedido_id})">
+                            <i class="fa-solid fa-trash me-1"></i>
                         </button>
                     </td>
                 </tr>

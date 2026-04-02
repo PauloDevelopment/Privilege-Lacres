@@ -20,147 +20,174 @@
         <!-- JS -->
         <script src="{{ url_for('static', filename='js/pedidos.js') }}"></script>
     </head>
-    <body>
 
-        <body>
-            <div class="container-fluid">
-                <header class="main-header d-flex align-items-center px-4 py-3">
-                    <div class="logo-area d-flex align-items-center">
-                        <div class="icon-box me-2">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <div>
-                            <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
-                            <small class="text-danger">Sistema de Gestão</small>
-                        </div>
+    <body>
+        <div class="container-fluid">
+            <header class="main-header d-flex align-items-center px-4 py-3">
+                <div class="logo-area d-flex align-items-center">
+                    <div class="icon-box me-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
+                        <small class="text-danger">Sistema de Gestão</small>
+                    </div>
+                </div>
+
+                <nav class="ms-5 d-flex gap-4">
+                    <a href="#" class="nav-link text-muted">
+                        <i class="fa-solid fa-table-cells-large me-1"></i>
+                        Dashboard
+                    </a>
+                    <a href="/" class="nav-link text-muted">
+                        <i class="fa-solid fa-building me-1"></i>
+                        Empresas
+                    </a>
+                    <a href="/pedidos-view" class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
+                        <i class="fa-solid fa-file-lines me-1"></i>
+                        Pedidos
+                    </a>
+                </nav>
+            </header>
+
+            <main class="container mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="h4 mb-0">Pedidos</h3>
+                        <p class="text-muted small">Gerenciar pedidos cadastrados no sistema</p>
+                    </div>
+                    <button class="btn btn-dark btn-save" data-bs-toggle="modal" data-bs-target="#modalPedido" onclick="prepararNovoPedido()">
+                        <i class="fa-solid fa-plus me-2"></i> Novo Pedido
+                    </button>
+                </div>
+
+                <div class="card p-3">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Número do Pedido</th>
+                                <th>Empresa</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th class="text-end">Valor Total</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-pedidos-corpo"></tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- MODAL PEDIDO -->
+        <div class="modal fade" id="modalPedido" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content border-0">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold">Informações do Pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <nav class="ms-5 d-flex gap-4">
-                        <a href="#" class="nav-link text-muted">
-                            <i class="fa-solid fa-table-cells-large me-1"></i>
-                            Dashboard
-                        </a>
-                        <a href="/"
-                        onclick="showList()"
-                        class="nav-link text-muted">
-                            <i class="fa-solid fa-building me-1"></i>
-                            Empresas
-                        </a>
-                        <a href="/pedidos-view" class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
-                        <i class="fa-solid fa-file-lines me-1"></i>
-                            Pedidos
-                        </a>
-                    </nav>
-                </header>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-4">Preencha os dados para cadastrar ou editar um pedido</p>
 
+                        <form id="formPedido">
+                            <input type="hidden" id="pedido_id">
 
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h3 class="h4 mb-0">Pedidos</h3>
-                <p class="text-muted small">Gerenciar pedidos cadastrados no sistema</p>
-            </div>
-            <button class="btn btn-dark px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPedido" onclick="prepararNovoPedido()">
-                <i class="bi bi-plus-lg me-2"></i> Novo Pedido
-            </button>
-        </div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Empresa *</label>
+                                    <select class="form-select" id="id_empresa" required>
+                                        <option value="">Selecione uma empresa...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Número do Pedido *</label>
+                                    <input type="text" class="form-control" id="numero_pedido" placeholder="Ex: PED-2026-001" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Data do Pedido *</label>
+                                    <input type="date" class="form-control" id="data" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Nota Fiscal (NF)</label>
+                                    <input type="text" class="form-control" id="nf" placeholder="Número da Nota">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Total da NF (R$)</label>
+                                    <input type="number" step="0.01" class="form-control" id="total_nf" placeholder="0,00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Data de Vencimento</label>
+                                    <input type="date" class="form-control" id="vencimento">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Data de Entrega</label>
+                                    <input type="date" class="form-control" id="data_entrega">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Status *</label>
+                                    <select class="form-select" id="status" required>
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Em Produção">Em Produção</option>
+                                        <option value="Concluído">Concluído</option>
+                                    </select>
+                                </div>
+                            </div>
 
-        <div class="card p-3">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>Número do Pedido</th>
-                        <th>Empresa</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                        <th class="text-end">Valor Total</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-pedidos-corpo">
-                    </tbody>
-            </table>
-        </div>
-    </div>
+                            <div class="mt-4 border-top pt-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-bold mb-0">Produtos / Itens do Pedido</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarLinhaItem()">
+                                        <i class="fa-solid fa-plus me-1"></i> Adicionar Item
+                                    </button>
+                                </div>
+                                <div id="container-itens"></div>
+                                <div class="d-flex justify-content-end mt-3 p-3 bg-dark text-white rounded shadow-sm">
+                                    <span class="me-3 opacity-75">Soma Total:</span>
+                                    <h4 id="valor-total-pedido" class="mb-0 fw-bold">R$ 0,00</h4>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
 
-    <div class="modal fade" id="modalPedido" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content border-0">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Informações do Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                
-                <div class="modal-body">
-                    <p class="text-muted small mb-4">Preencha os dados para cadastrar ou editar um pedido</p>
-                    
-                    <form id="formPedido">
-                        <input type="hidden" id="pedido_id">
-
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label small fw-bold">Empresa *</label>
-                                <select class="form-select" id="id_empresa" required>
-                                    <option value="">Selecione uma empresa...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Número do Pedido *</label>
-                                <input type="text" class="form-control" id="numero_pedido" placeholder="Ex: PED-2026-001" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Data do Pedido *</label>
-                                <input type="date" class="form-control" id="data" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Nota Fiscal (NF)</label>
-                                <input type="text" class="form-control" id="nf" placeholder="Número da Nota">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Total da NF (R$)</label>
-                                <input type="number" step="0.01" class="form-control" id="total_nf" placeholder="0,00">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">Data de Vencimento</label>
-                                <input type="date" class="form-control" id="vencimento">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">Data de Entrega</label>
-                                <input type="date" class="form-control" id="data_entrega">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">Status *</label>
-                                <select class="form-select" id="status" required>
-                                    <option value="Pendente">Pendente</option>
-                                    <option value="Em Produção">Em Produção</option>
-                                    <option value="Concluído">Concluído</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 border-top pt-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold mb-0">Produtos / Itens do Pedido</h6>
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarLinhaItem()">
-                                    <i class="bi bi-plus-circle me-1"></i> Adicionar Item
-                                </button>
-                            </div>
-                            <div id="container-itens"></div>
-                            <div class="d-flex justify-content-end mt-3 p-3 bg-dark text-white rounded shadow-sm">
-                                <span class="me-3 opacity-75">Soma Total:</span>
-                                <h4 id="valor-total-pedido" class="mb-0 fw-bold">R$ 0,00</h4>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-dark px-4" onclick="salvarPedidoCompleto()">Salvar Pedido</button>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-dark px-4" onclick="salvarPedidoCompleto()">Salvar Pedido</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- MODAL DE CONFIRMAÇÃO - DELETAR PEDIDO -->
+        <div class="modal fade" id="confirmModalPedido" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Deseja realmente excluir este pedido?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" id="confirm-delete-pedido-btn" class="btn btn-danger">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
+            <div id="liveToast" class="toast align-items-center border-0">
+                <div class="d-flex">
+                    <div class="toast-body" id="toast-message"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
