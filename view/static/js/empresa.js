@@ -21,78 +21,89 @@ document.addEventListener("DOMContentLoaded", () => {
     if (form) form.addEventListener("submit", salvarEmpresa);
 });
 
-// Listar empresas
-async function carregarEmpresas() {
-    const response = await fetch("/empresas");
+// ✅ ALTERADO: agora aceita um termo de busca
+async function carregarEmpresas(termo = '') {
+    const url = termo ? `/empresas/buscar?q=${encodeURIComponent(termo)}` : '/empresas';
+    const response = await fetch(url);
     const empresas = await response.json();
 
     const container = document.getElementById("empresa-list");
     container.innerHTML = "";
 
-empresas.forEach(e => {
-    container.innerHTML += `
-    <div class="col-md-6 col-lg-4">
-        <div class="card p-3 border-0 shadow-sm">
+    // ✅ NOVO: mensagem quando não encontra nada
+    if (empresas.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="fa-solid fa-building-circle-xmark fa-2x mb-3 d-block"></i>
+                Nenhuma empresa encontrada para "<strong>${termo}</strong>".
+            </div>`;
+        return;
+    }
 
-            <div class="d-flex align-items-center mb-3">
-                <i class="fa-solid fa-building text-primary me-2"></i>
-                <span class="fw-bold text-primary" 
-                      style="cursor:pointer;" 
-                      onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
-                      title="Ver pedidos desta empresa">
-                    ${e.razao_social}
-                </span>
-            </div>
+    empresas.forEach(e => {
+        container.innerHTML += `
+        <div class="col-md-6 col-lg-4">
+            <div class="card p-3 border-0 shadow-sm">
 
-            <div class="small text-muted mb-3">
-                <p class="mb-1"><strong>ID Empresa:</strong> ${e.id_empresa}</p>
-                <p class="mb-1"><strong>Nome Comprador:</strong> ${e.nome_comprador}</p>
-                <p class="mb-1"><strong>CNPJ:</strong> ${formatarCNPJ(e.cnpj)}</p>
-                <p class="mb-1"><strong>Inscrição Estadual:</strong> ${e.ie}</p>
-                <p class="mb-1"><strong>Telefone:</strong> ${formatarTelefone(e.telefone)}</p>
-                <p class="mb-1"><strong>E-mail:</strong> ${e.email}</p>
-                <p class="mb-1"><strong>Data de Cadastro:</strong> ${e.data_cadastro}</p>
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fa-solid fa-building text-primary me-2"></i>
+                    <span class="fw-bold text-primary" 
+                          style="cursor:pointer;" 
+                          onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
+                          title="Ver pedidos desta empresa">
+                        ${e.razao_social}
+                    </span>
+                </div>
 
-                ${e.rua || e.cidade || e.estado || e.cep ? `
-                <hr class="my-2">
-                <p class="mb-1 fw-bold text-dark">
-                    <i class="fa-solid fa-location-dot me-1 text-primary"></i>Endereço
-                </p>
-                ${e.rua    ? `<p class="mb-1"><strong>Rua:</strong> ${e.rua}</p>` : ''}
-                ${e.cidade ? `<p class="mb-1"><strong>Cidade:</strong> ${e.cidade}</p>` : ''}
-                ${e.estado ? `<p class="mb-1"><strong>Estado:</strong> ${e.estado}</p>` : ''}
-                ${e.cep    ? `<p class="mb-1"><strong>CEP:</strong> ${formatarCEP(e.cep)}</p>` : ''}
-                ` : ''}
+                <div class="small text-muted mb-3">
+                    <p class="mb-1"><strong>ID Empresa:</strong> ${e.id_empresa}</p>
+                    <p class="mb-1"><strong>Nome Comprador:</strong> ${e.nome_comprador}</p>
+                    <p class="mb-1"><strong>CNPJ:</strong> ${formatarCNPJ(e.cnpj)}</p>
+                    <p class="mb-1"><strong>Inscrição Estadual:</strong> ${e.ie}</p>
+                    <p class="mb-1"><strong>Telefone:</strong> ${formatarTelefone(e.telefone)}</p>
+                    <p class="mb-1"><strong>E-mail:</strong> ${e.email}</p>
+                    <p class="mb-1"><strong>Data de Cadastro:</strong> ${e.data_cadastro}</p>
 
-                ${e.observacao ? `
-                <hr class="my-2">
-                <p class="mb-1 fw-bold text-dark">
-                    <i class="fa-solid fa-note-sticky me-1 text-primary"></i>Observação
-                </p>
-                <p class="mb-0 fst-italic">${e.observacao}</p>
-                ` : ''}
-            </div>
+                    ${e.rua || e.cidade || e.estado || e.cep ? `
+                    <hr class="my-2">
+                    <p class="mb-1 fw-bold text-dark">
+                        <i class="fa-solid fa-location-dot me-1 text-primary"></i>Endereço
+                    </p>
+                    ${e.rua    ? `<p class="mb-1"><strong>Rua:</strong> ${e.rua}</p>` : ''}
+                    ${e.cidade ? `<p class="mb-1"><strong>Cidade:</strong> ${e.cidade}</p>` : ''}
+                    ${e.estado ? `<p class="mb-1"><strong>Estado:</strong> ${e.estado}</p>` : ''}
+                    ${e.cep    ? `<p class="mb-1"><strong>CEP:</strong> ${formatarCEP(e.cep)}</p>` : ''}
+                    ` : ''}
 
-            <div class="d-flex border-top pt-3 justify-content-around">
-                <button onclick="editarEmpresa(${e.id_empresa})"
-                    class="btn btn-link text-success text-decoration-none small">
-                    <i class="fa-solid fa-pen me-1"></i> Editar
-                </button>
-                
-                <button onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
-                    class="btn btn-link text-primary text-decoration-none small">
-                    <i class="fa-solid fa-file-lines me-1"></i> Pedidos
-                </button>
-                
-                <button onclick="deletarEmpresa(${e.id_empresa})"
-                    class="btn btn-link text-danger text-decoration-none small">
-                    <i class="fa-solid fa-trash me-1"></i> Excluir
-                </button>
+                    ${e.observacao ? `
+                    <hr class="my-2">
+                    <p class="mb-1 fw-bold text-dark">
+                        <i class="fa-solid fa-note-sticky me-1 text-primary"></i>Observação
+                    </p>
+                    <p class="mb-0 fst-italic">${e.observacao}</p>
+                    ` : ''}
+                </div>
+
+                <div class="d-flex border-top pt-3 justify-content-around">
+                    <button onclick="editarEmpresa(${e.id_empresa})"
+                        class="btn btn-link text-success text-decoration-none small">
+                        <i class="fa-solid fa-pen me-1"></i> Editar
+                    </button>
+                    
+                    <button onclick="abrirPedidosEmpresa(${e.id_empresa}, '${e.razao_social}')"
+                        class="btn btn-link text-primary text-decoration-none small">
+                        <i class="fa-solid fa-file-lines me-1"></i> Pedidos
+                    </button>
+                    
+                    <button onclick="deletarEmpresa(${e.id_empresa})"
+                        class="btn btn-link text-danger text-decoration-none small">
+                        <i class="fa-solid fa-trash me-1"></i> Excluir
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    `;
-});
+        `;
+    });
 }
 
 // Criar ou editar empresas
@@ -157,7 +168,6 @@ async function editarEmpresa(id){
     document.getElementById("estado").value = empresa.estado || '';
     document.getElementById("observacao").value = empresa.observacao || '';
 
-    // Preenche via máscara
     if (cnpjMask) {
         cnpjMask.unmaskedValue = empresa.cnpj || '';
         cnpjMask.updateValue();
@@ -181,12 +191,10 @@ async function editarEmpresa(id){
 async function deletarEmpresa(id) {
     empresaParaDeletar = id;
 
-    // Abre o modal
     const modalEl = document.getElementById("confirmModal");
     const bsModal = new bootstrap.Modal(modalEl);
     bsModal.show();
 
-    // Remove listener antigo para evitar duplicidade
     const btnConfirm = document.getElementById("confirm-delete-btn");
     btnConfirm.replaceWith(btnConfirm.cloneNode(true));
     const newBtn = document.getElementById("confirm-delete-btn");
@@ -387,7 +395,6 @@ async function abrirDetalhePedido(pedidoId) {
                 </table>
             </div>
 
-            <!-- BOTÃO EDITAR NO RODAPÉ DO MODAL -->
             <div class="d-flex justify-content-end mt-3 pt-3 border-top">
                 <button class="btn btn-dark px-4"
                         onclick="editarPedidoDetalhe(${p.pedido_id})">
@@ -401,12 +408,9 @@ async function abrirDetalhePedido(pedidoId) {
 }
 
 async function editarPedidoDetalhe(pedidoId) {
-    // Fecha o modal de detalhes
     bootstrap.Modal.getInstance(
         document.getElementById('modalDetalhePedido')
     ).hide();
-
-    // Redireciona para a página de pedidos passando o id via query string
     window.location.href = `/pedidos-view?editar=${pedidoId}`;
 }
 
@@ -464,4 +468,11 @@ function configurarViaCEP() {
             showToast("Erro ao buscar CEP.", "danger");
         }
     });
+}
+
+let buscaTimer = null;
+function buscarEmpresas() {
+    const termo = document.getElementById('input-busca').value.trim();
+    clearTimeout(buscaTimer);
+    buscaTimer = setTimeout(() => carregarEmpresas(termo), 300);
 }

@@ -58,24 +58,36 @@
             <main class="col-12 px-4 py-4">
 
                 <!-- LISTA DE EMPRESAS -->
-                <section id="section-list">
-                    <div class="d-flex justify-content-between align-items-end mb-4">
-                        <div>
-                            <h2 class="h4 mb-0">Empresas</h2>
-                            <p class="text-muted small">
-                                Gerenciar empresas cadastradas no sistema
-                            </p>
-                        </div>
+<section id="section-list">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h4 mb-0">Empresas</h2>
+            <p class="text-muted small mb-0">
+                Gerenciar empresas cadastradas no sistema
+            </p>
+        </div>
 
-                        <button class="btn btn-dark btn-save"
-                                onclick="showForm('cadastrar')">
-                            <i class="fa-solid fa-plus me-2"></i>
-                            Nova Empresa
-                        </button>
-                    </div>
+        <div class="input-group" style="max-width: 340px;">
+            <span class="input-group-text bg-white border-end-0">
+                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+            </span>
+            <input type="text"
+                   id="input-busca"
+                   class="form-control border-start-0 ps-0"
+                   placeholder="Buscar empresa por nome..."
+                   oninput="buscarEmpresas()">
+        </div>
 
-                    <div class="row g-4" id="empresa-list"></div>
-                </section>
+        <button class="btn btn-dark btn-save"
+                onclick="showForm('cadastrar')">
+            <i class="fa-solid fa-plus me-2"></i>
+            Nova Empresa
+        </button>
+    </div>
+
+    <div class="row g-4" id="empresa-list"></div>
+</section>
+
 
                 <!-- FORMULÁRIO -->
                 <section id="section-form" style="display:none;">

@@ -167,3 +167,18 @@ def listar_pedidos_empresa(id_empresa):
     except SQLAlchemyError:
         db.session.rollback()
         return jsonify({'error': 'Erro ao buscar pedidos.'}), 500
+    
+@empresa_bp.route('/buscar', methods=['GET'])
+def buscar_empresas():
+    termo = request.args.get('q', '').strip()
+    try:
+        if termo:
+            empresas = db.session.query(Empresa).filter(
+                Empresa.razao_social.ilike(f'%{termo}%')
+            ).all()
+        else:
+            empresas = db.session.query(Empresa).all()
+        return jsonify([e.to_dict() for e in empresas])
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({'error': 'Erro ao buscar empresas.'}), 500
