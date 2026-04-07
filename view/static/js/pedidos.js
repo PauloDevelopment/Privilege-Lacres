@@ -2,6 +2,11 @@ console.log("JS carregado");
 // Configuração da URL base do seu servidor Flask
 const API_BASE_URL = 'http://localhost:5000'; 
 
+if (!localStorage.getItem("token")) {
+    alert("Você não está logado!");
+    window.location.href = "/login";
+}
+
 // Toast
 function showToast(message, type = "success") {
     const toast = document.getElementById("liveToast");

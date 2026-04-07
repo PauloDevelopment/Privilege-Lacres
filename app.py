@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from db import init_db
 import os
+from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from controller.empresa_controller import empresa_bp
@@ -22,6 +23,10 @@ def create_app():
     app.register_blueprint(empresa_bp, url_prefix="/empresas")
     app.register_blueprint(pedido_bp, url_prefix='/pedidos')
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
+
+    @app.route("/login")
+    def login_view():
+        return render_template("login.html")
 
     @app.route("/")
     def index():

@@ -75,3 +75,41 @@ function showList() {
     list.style.display = 'block';
     form.style.display = 'none';
 }
+
+function getToken() {
+    return localStorage.getItem("token");
+}
+
+async function fetchAuth(url, options = {}) {
+    const token = getToken();
+
+    const headers = {
+        "Content-Type": "application/json",
+        ...options.headers,
+    };
+
+    if (token) {
+        headers["Authorization"] = "Bearer " + token;
+    }
+
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+
+    if (response.status === 401) {
+        localStorage.removeItem("token");
+        alert("Sessão expirada!");
+        window.location.href = "/login";
+        return;
+    }
+
+    if (response.status === 422) {
+        localStorage.removeItem("token");
+        alert("Você não está logado!");
+        window.location.href = "/login";
+        return;
+    }
+
+    return response;
+}

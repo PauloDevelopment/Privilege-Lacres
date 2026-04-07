@@ -1,3 +1,8 @@
+if (!localStorage.getItem("token")) {
+    alert("Você não está logado!");
+    window.location.href = "/login";
+}
+
 let empresaEditando = null;
 let empresaParaDeletar = null;
 
