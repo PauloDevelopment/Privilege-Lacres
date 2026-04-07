@@ -1,16 +1,27 @@
 from flask import Flask, render_template
 from db import init_db
+import os
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
+from controller.empresa_controller import empresa_bp
 from controller.pedido_controller import pedido_bp
+from controller.usuario_controller import usuario_bp
 
 def create_app():
-    from controller.empresa_controller import empresa_bp
+    load_dotenv()
 
     app = Flask(__name__, template_folder="view", static_folder="view/static")
+
+    # Configuração JWT
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
+    jwt = JWTManager(app)
 
     init_db(app)
 
     app.register_blueprint(empresa_bp, url_prefix="/empresas")
     app.register_blueprint(pedido_bp, url_prefix='/pedidos')
+    app.register_blueprint(usuario_bp, url_prefix='/usuarios')
 
     @app.route("/")
     def index():
