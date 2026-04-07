@@ -4,16 +4,20 @@ from model.empresa import Empresa
 from model.pedidos import Pedido
 from datetime import datetime
 from db import db
+from flask_jwt_extended import jwt_required
+
 import pytz
 
 empresa_bp = Blueprint('empresa_bp', __name__)
 
 @empresa_bp.route('/', methods=['GET'])
+@jwt_required()
 def listar_empresas():
     empresas = db.session.query(Empresa).all()
     return jsonify([empresa.to_dict() for empresa in empresas])
 
 @empresa_bp.route('/<int:id_empresa>', methods=['GET'])
+@jwt_required()
 def listar_empresa(id_empresa):
     try:
         empresa = db.session.query(Empresa).filter_by(id_empresa=id_empresa).first()
@@ -27,6 +31,7 @@ def listar_empresa(id_empresa):
         return jsonify({'error': 'Erro inesperado no servidor.'}), 500
 
 @empresa_bp.route('/', methods=['POST'])
+@jwt_required()
 def criar_empresa():
     data = request.json
     obrigatorio = ['razao_social', 'nome_comprador', 'telefone', 'email', 'cnpj', 'ie']
@@ -78,6 +83,7 @@ def criar_empresa():
         return jsonify({'error': 'Erro inesperado no servidor.'}), 500
 
 @empresa_bp.route('/<int:id_empresa>', methods=['PUT'])
+@jwt_required()
 def atualizar_empresa(id_empresa):
     data = request.json
     try:
@@ -123,6 +129,7 @@ def atualizar_empresa(id_empresa):
         return jsonify({'error': 'Erro inesperado no servidor.'}), 500
 
 @empresa_bp.route('/<int:id_empresa>', methods=['DELETE'])
+@jwt_required()
 def deletar_empresa(id_empresa):
     try:
         empresa = db.session.query(Empresa).filter_by(id_empresa=id_empresa).first()
@@ -145,6 +152,7 @@ def deletar_empresa(id_empresa):
         return jsonify({'error': 'Erro inesperado no servidor.'}), 500
 
 @empresa_bp.route('/<int:id_empresa>/pedidos', methods=['GET'])
+@jwt_required()
 def listar_pedidos_empresa(id_empresa):
     try:
         empresa = db.session.query(Empresa).filter_by(id_empresa=id_empresa).first()
@@ -169,6 +177,7 @@ def listar_pedidos_empresa(id_empresa):
         return jsonify({'error': 'Erro ao buscar pedidos.'}), 500
     
 @empresa_bp.route('/buscar', methods=['GET'])
+@jwt_required()
 def buscar_empresas():
     termo = request.args.get('q', '').strip()
     try:

@@ -4,6 +4,7 @@ from model.pedidos import Pedido
 from model.itens_pedido import ItemPedido
 from db import db
 from datetime import datetime
+from flask_jwt_extended import jwt_required
 
 pedido_bp = Blueprint('pedido_bp', __name__)
 
@@ -14,6 +15,7 @@ def parse_date(value):
         return None
     
 @pedido_bp.route('/', methods=['POST'])
+@jwt_required()
 def criar_pedido():
     data = request.json
 
@@ -65,6 +67,7 @@ def criar_pedido():
         return jsonify({'error': f'Erro inesperado: {str(e)}'}), 500
     
 @pedido_bp.route('/<int:pedido_id>', methods=['PUT'])
+@jwt_required()
 def atualizar_pedido(pedido_id):
     data = request.json
 
@@ -121,6 +124,7 @@ def atualizar_pedido(pedido_id):
 
 
 @pedido_bp.route('/<int:pedido_id>', methods=['GET'])
+@jwt_required()
 def buscar_pedido(pedido_id):
     try:
         pedido = db.session.query(Pedido).filter_by(pedido_id=pedido_id).first()
@@ -136,6 +140,7 @@ def buscar_pedido(pedido_id):
 
 
 @pedido_bp.route('/', methods=['GET'])
+@jwt_required()
 def listar_pedidos():
     pedidos = db.session.query(Pedido).all()
 
@@ -153,6 +158,7 @@ def listar_pedidos():
 
 
 @pedido_bp.route('/<int:id_pedido>', methods=['DELETE'])
+@jwt_required()
 def deletar_pedido(id_pedido):
     try:
         pedido = db.session.query(Pedido).filter_by(pedido_id=id_pedido).first()
