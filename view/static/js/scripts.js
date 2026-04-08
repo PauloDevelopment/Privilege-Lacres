@@ -113,3 +113,8 @@ async function fetchAuth(url, options = {}) {
 
     return response;
 }
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+}

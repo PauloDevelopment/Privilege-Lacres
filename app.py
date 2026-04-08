@@ -24,12 +24,12 @@ def create_app():
     app.register_blueprint(pedido_bp, url_prefix='/pedidos')
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
 
-    @app.route("/login")
+    @app.route("/")
     def login_view():
         return render_template("login.html")
-
-    @app.route("/")
-    def index():
+    
+    @app.route("/empresas-view")
+    def empresa_view():
         return render_template("empresa.html")
     
     @app.route("/pedidos-view")

@@ -1,3 +1,7 @@
+if (localStorage.getItem("token")) {
+    window.location.href = "/";
+}
+
 const API_URL = "/usuarios/login";
 
 document.addEventListener("DOMContentLoaded", () => {

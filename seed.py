@@ -2,11 +2,13 @@ from datetime import datetime
 import pytz
 from werkzeug.security import generate_password_hash
 from db import db
-from main import app
+from app import create_app
 from model.usuario import Usuario
 
 
 def seed_user():
+    app = create_app()
+
     with app.app_context():
 
         existing_user = Usuario.query.filter_by(email="admin@email.com").first()
