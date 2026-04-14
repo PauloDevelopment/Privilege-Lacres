@@ -1,10 +1,10 @@
 from datetime import datetime
-import pytz
 from werkzeug.security import generate_password_hash
 from db import db
 from app import create_app
 from model.usuario import Usuario
-
+import pytz
+import os
 
 def seed_user():
     app = create_app()
@@ -18,8 +18,8 @@ def seed_user():
 
         user = Usuario(
             name="Admin",
-            email="admin@email.com",
-            password=generate_password_hash("123456"),
+            email=os.getenv("EMAIL"),
+            password=generate_password_hash(os.getenv("PASSWORD")),
             role="admin",
             data_cadastro=datetime.now(pytz.timezone('America/Sao_Paulo'))
         )

@@ -1,11 +1,14 @@
-console.log("JS carregado");
-// Configuração da URL base do seu servidor Flask
-const API_BASE_URL = 'http://localhost:5000'; 
+document.addEventListener('DOMContentLoaded', async () => {
+    await requireAuth();
+    listarPedidos();
+    carregarEmpresasSelect();
 
-if (!localStorage.getItem("token")) {
-    alert("Você não está logado!");
-    window.location.href = "/login";
-}
+    const params = new URLSearchParams(window.location.search);
+    const editarId = params.get('editar');
+    if (editarId) {
+        setTimeout(() => editarPedido(parseInt(editarId)), 800);
+    }
+});
 
 // Toast
 function showToast(message, type = "success") {
@@ -21,7 +24,6 @@ function showToast(message, type = "success") {
 
 /**
  * 1. LISTAGEM DE PEDIDOS (READ)
- * Busca os pedidos no Flask e preenche a tabela
  */
 let pedidoParaDeletar = null;
 
@@ -32,16 +34,17 @@ async function excluirPedido(id) {
     const bsModal = new bootstrap.Modal(modalEl);
     bsModal.show();
 
-    // Troca o botão para evitar listeners duplicados
     const btnConfirm = document.getElementById("confirm-delete-pedido-btn");
     btnConfirm.replaceWith(btnConfirm.cloneNode(true));
     const newBtn = document.getElementById("confirm-delete-pedido-btn");
 
     newBtn.addEventListener("click", async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/pedidos/${pedidoParaDeletar}`, {
+            const response = await fetchAuth(`/pedidos/${pedidoParaDeletar}`, {
                 method: 'DELETE'
             });
+
+            if (!response) return;
 
             if (response.ok) {
                 bsModal.hide();
@@ -58,24 +61,24 @@ async function excluirPedido(id) {
 
 async function listarPedidos() {
     try {
-        const response = await fetch(`${API_BASE_URL}/pedidos`);
+        const response = await fetchAuth(`/pedidos`);
+        if (!response) return;
+
         const pedidos = await response.json();
         
         const corpoTabela = document.getElementById('tabela-pedidos-corpo');
         corpoTabela.innerHTML = '';
 
         pedidos.forEach(p => {
-            // Calcula o total somando os itens (usando a lógica do seu to_dict)
             const totalCalculado = p.total || 0;
             
-            // Define a cor do badge de status baseada no seu anexo
             const statusClass = p.status === 'Pendente' ? 'bg-warning text-dark' : 
                                 p.status === 'Em Produção' ? 'bg-primary' : 'bg-success';
 
             corpoTabela.innerHTML += `
                 <tr>
                     <td class="fw-bold">${p.numero_pedido}</td>
-                    <td class="text-primary">Empresa ID: ${p.id_empresa}</td>
+                    <td class="text-primary">Empresa: ${p.id_empresa}</td>
                     <td>${p.data}</td>
                     <td><span class="badge ${statusClass} px-3">${p.status}</span></td>
                     <td class="text-end fw-bold text-dark">R$ ${totalCalculado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
@@ -96,12 +99,11 @@ async function listarPedidos() {
 }
 
 /**
- * 2. GERENCIAMENTO DE ITENS DINÂMICOS
- * Adiciona uma nova linha de produto no modal
+ * 2. ITENS DINÂMICOS
  */
 function adicionarLinhaItem(dados = {}) {
     const container = document.getElementById('container-itens');
-    const idLinha = Date.now(); // Gera um ID temporário único para a linha
+    const idLinha = Date.now();
 
     const div = document.createElement('div');
     div.className = 'row g-2 mb-2 align-items-end item-row';
@@ -133,8 +135,7 @@ function removerLinhaItem(id) {
 }
 
 /**
- * 3. CÁLCULO DE TOTAL (SOMA PRODUTO X QTD)
- * Atualiza o valor visual no modal
+ * 3. TOTAL
  */
 function calcularTotalPedido() {
     let totalGeral = 0;
@@ -146,24 +147,22 @@ function calcularTotalPedido() {
         totalGeral += (qtd * valor);
     });
 
-    document.getElementById('valor-total-pedido').innerText = `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('valor-total-pedido').innerText =
+        `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
 /**
- * 4. SALVAR PEDIDO (CREATE / UPDATE)
- * Coleta todos os dados do formulário e envia para o Flask
+ * 4. SALVAR PEDIDO
  */
 async function salvarPedidoCompleto() {
     const id = document.getElementById('pedido_id').value;
     
-    // Coleta os itens da lista dinâmica
     const itens = Array.from(document.querySelectorAll('.item-row')).map(linha => ({
         produto: linha.querySelector('.campo-produto').value,
         quantidade: parseFloat(linha.querySelector('.campo-quantidade').value),
         valor_milheiro: parseFloat(linha.querySelector('.campo-valor').value)
     }));
 
-    // Monta o objeto seguindo os nomes das colunas do seu banco
     const payload = {
         id_empresa: document.getElementById('id_empresa').value,
         numero_pedido: document.getElementById('numero_pedido').value,
@@ -173,24 +172,26 @@ async function salvarPedidoCompleto() {
         vencimento: document.getElementById('vencimento').value,
         data_entrega: document.getElementById('data_entrega').value,
         status: document.getElementById('status').value,
-        itens: itens // O back-end deve processar essa lista
+        itens: itens
     };
 
-    const url = id ? `${API_BASE_URL}/pedidos/${id}` : `${API_BASE_URL}/pedidos`;
+    const url = id ? `/pedidos/${id}` : `/pedidos`;
     const metodo = id ? 'PUT' : 'POST';
 
     try {
-        const response = await fetch(url, {
+        const response = await fetchAuth(url, {
             method: metodo,
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
+        if (!response) return;
+
         if (response.ok) {
             bootstrap.Modal.getInstance(document.getElementById('modalPedido')).hide();
+            showToast("Pedido salvo com sucesso!", "success");
             listarPedidos();
         } else {
-            alert("Erro ao salvar o pedido.");
+            showToast("Erro ao salvar o pedido.", "danger");
         }
     } catch (error) {
         console.error("Erro na requisição:", error);
@@ -198,22 +199,21 @@ async function salvarPedidoCompleto() {
 }
 
 /**
- * 5. FUNÇÕES AUXILIARES
+ * 5. AUXILIARES
  */
-
-// Limpa o modal para um novo cadastro
 function prepararNovoPedido() {
     document.getElementById('formPedido').reset();
     document.getElementById('pedido_id').value = '';
     document.getElementById('container-itens').innerHTML = '';
     document.getElementById('valor-total-pedido').innerText = 'R$ 0,00';
-    adicionarLinhaItem(); // Inicia com uma linha vazia
+    adicionarLinhaItem();
 }
 
-// Carrega as empresas no Select do Modal
 async function carregarEmpresasSelect() {
     try {
-        const response = await fetch(`${API_BASE_URL}/empresas`);
+        const response = await fetchAuth(`/empresas`);
+        if (!response) return;
+
         const empresas = await response.json();
         const select = document.getElementById('id_empresa');
         
@@ -228,10 +228,11 @@ async function carregarEmpresasSelect() {
     }
 }
 
-// Preenche o modal para edição
 async function editarPedido(id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/pedidos/${id}`);
+        const response = await fetchAuth(`/pedidos/${id}`);
+        if (!response) return;
+
         const p = await response.json();
 
         document.getElementById('pedido_id').value = p.pedido_id;
@@ -241,10 +242,9 @@ async function editarPedido(id) {
         document.getElementById('total_nf').value = p.total_nf;
         document.getElementById('status').value = p.status;
         
-        // Formatar datas para o input type="date" (YYYY-MM-DD)
         if(p.data) document.getElementById('data').value = p.data.split('/').reverse().join('-');
         if(p.vencimento) document.getElementById('vencimento').value = p.vencimento.split('/').reverse().join('-');
-        // Limpa e preenche os itens
+
         const container = document.getElementById('container-itens');
         container.innerHTML = '';
         p.itens.forEach(item => adicionarLinhaItem(item));
@@ -255,16 +255,3 @@ async function editarPedido(id) {
         console.error("Erro ao carregar pedido:", error);
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    listarPedidos();
-    carregarEmpresasSelect();
-
-    // Verifica se deve abrir edição direto
-    const params = new URLSearchParams(window.location.search);
-    const editarId = params.get('editar');
-    if (editarId) {
-        // Aguarda o select de empresas carregar antes de abrir
-        setTimeout(() => editarPedido(parseInt(editarId)), 800);
-    }
-});

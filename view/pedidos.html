@@ -19,6 +19,7 @@
 
         <!-- JS -->
         <script src="{{ url_for('static', filename='js/pedidos.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     </head>
 
     <body>
@@ -47,11 +48,13 @@
                         <i class="fa-solid fa-file-lines me-1"></i>
                         Pedidos
                     </a>
+                </nav>
+                <div class="ms-auto d-flex align-items-center gap-3">
                     <a href="#" onclick="logout()" class="nav-link text-danger">
                         <i class="fa-solid fa-right-from-bracket me-1"></i>
                         Sair
                     </a>
-                </nav>
+                </div>
             </header>
 
             <main class="container mt-5">

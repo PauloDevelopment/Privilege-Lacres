@@ -1,12 +1,12 @@
 from flask import Flask, render_template
 from db import init_db
-import os
-from dotenv import load_dotenv
-from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from controller.empresa_controller import empresa_bp
 from controller.pedido_controller import pedido_bp
 from controller.usuario_controller import usuario_bp
+import os
+from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
 
 def create_app():
     load_dotenv()

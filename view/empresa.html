@@ -1,357 +1,324 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Gestão de Empresas</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Empresas</title>
 
-        <!-- Bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <!-- Máscaras -->
-        <script src="https://unpkg.com/imask"></script>
+    <!-- Máscaras -->
+    <script src="https://unpkg.com/imask"></script>
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-        <!-- JS -->
-        <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
-        <script src="{{ url_for('static', filename='js/empresa.js') }}" defer></script>
-    </head>
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/empresa.js') }}" defer></script>
+</head>
 
-    <body>
-        <div class="container-fluid">
-            <header class="main-header d-flex align-items-center px-4 py-3">
-                <div class="logo-area d-flex align-items-center">
-                    <div class="icon-box me-2">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
+<body style="display: none;">
+    <div class="container-fluid">
+
+        <!-- HEADER -->
+        <header class="main-header d-flex align-items-center px-4 py-3">
+            <div class="logo-area d-flex align-items-center">
+                <div class="icon-box me-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
+                    <small class="text-danger">Sistema de Gestão</small>
+                </div>
+            </div>
+
+            <nav class="ms-5 d-flex gap-4">
+                <a href="#" class="nav-link text-muted">
+                    <i class="fa-solid fa-table-cells-large me-1"></i>
+                    Dashboard
+                </a>
+
+                <a href="/empresas-view"
+                   onclick="showList()"
+                   class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
+                    <i class="fa-solid fa-building me-1"></i>
+                    Empresas
+                </a>
+
+                <a href="/pedidos-view" class="nav-link text-muted">
+                    <i class="fa-solid fa-file-lines me-1"></i>
+                    Pedidos
+                </a>
+            </nav>
+
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <a href="#" onclick="logout()" class="nav-link text-danger">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i>
+                    Sair
+                </a>
+            </div>
+        </header>
+
+        <!-- MAIN -->
+        <main class="col-12 px-4 py-4">
+
+            <!-- LISTA DE EMPRESAS -->
+            <section id="section-list">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
-                        <small class="text-danger">Sistema de Gestão</small>
-                    </div>
-                </div>
-
-                <nav class="ms-5 d-flex gap-4">
-                    <a href="#" class="nav-link text-muted">
-                        <i class="fa-solid fa-table-cells-large me-1"></i>
-                        Dashboard
-                    </a>
-                    <a href="/empresas-view"
-                    onclick="showList()"
-                    class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
-                        <i class="fa-solid fa-building me-1"></i>
-                        Empresas
-                    </a>
-                    <a href="/pedidos-view" class="nav-link text-muted">
-                        <i class="fa-solid fa-file-lines me-1"></i>
-                        Pedidos
-                    </a>
-                    <a href="#" onclick="logout()" class="nav-link text-danger">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i>
-                        Sair
-                    </a>
-                </nav>
-            </header>
-
-            <main class="col-12 px-4 py-4">
-
-                <!-- LISTA DE EMPRESAS -->
-<section id="section-list">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="h4 mb-0">Empresas</h2>
-            <p class="text-muted small mb-0">
-                Gerenciar empresas cadastradas no sistema
-            </p>
-        </div>
-
-        <div class="input-group" style="max-width: 340px;">
-            <span class="input-group-text bg-white border-end-0">
-                <i class="fa-solid fa-magnifying-glass text-muted"></i>
-            </span>
-            <input type="text"
-                   id="input-busca"
-                   class="form-control border-start-0 ps-0"
-                   placeholder="Buscar empresa por nome..."
-                   oninput="buscarEmpresas()">
-        </div>
-
-        <button class="btn btn-dark btn-save"
-                onclick="showForm('cadastrar')">
-            <i class="fa-solid fa-plus me-2"></i>
-            Nova Empresa
-        </button>
-    </div>
-
-    <div class="row g-4" id="empresa-list"></div>
-</section>
-
-
-                <!-- FORMULÁRIO -->
-                <section id="section-form" style="display:none;">
-                    <div class="d-flex align-items-center mb-3">
-                        <button class="btn btn-light btn-sm me-3 border"
-                                onclick="showList()">
-                            <i class="fa-solid fa-arrow-left"></i>
-                        </button>
-
-                        <div>
-                            <h2 id="form-title" class="h4 mb-0">
-                                Nova Empresa
-                            </h2>
-                            <p class="text-muted small mb-0">
-                                Preencha os dados da Empresa
-                            </p>
-                        </div>
+                        <h2 class="h4 mb-0">Empresas</h2>
+                        <p class="text-muted small mb-0">
+                            Gerenciar empresas cadastradas no sistema
+                        </p>
                     </div>
 
-                    <div class="card p-4 border-0 shadow-sm">
-                        <form class="row g-3" id="empresa-form">
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">
-                                    Razão Social *
-                                </label>
-                                <input id="razao_social"
-                                    type="text"
-                                    class="form-control"
-                                    required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">
-                                    Nome Comprador *
-                                </label>
-                                <input id="nome_comprador"
-                                    type="text"
-                                    class="form-control"
-                                    required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">
-                                    CNPJ *
-                                </label>
-                                <input id="cnpj"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="00.000.000/0000-00"
-                                    required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">
-                                    Inscrição Estadual *
-                                </label>
-                                <input id="ie"
-                                    type="text"
-                                    class="form-control"
-                                    required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">
-                                    Telefone *
-                                </label>
-                                <input id="telefone"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="(00) 00000-0000"
-                                    required>
-                            </div>
-
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold">
-                                    E-mail *
-                                </label>
-                                <input id="email"
-                                    type="email"
-                                    class="form-control"
-                                    required>
-                            </div>
-
-                            <div class="col-12 mt-2">
-                                <hr class="mb-2">
-                                <p class="small fw-bold text-muted mb-2">
-                                    <i class="fa-solid fa-location-dot me-1"></i>
-                                    Endereço
-                                </p>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold">
-                                    CEP
-                                </label>
-                                <input id="cep"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="00000-000">
-                            </div>
-
-                            <div class="col-md-7">
-                                <label class="form-label small fw-bold">
-                                    Rua / Logradouro
-                                </label>
-                                <input id="rua"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Ex: Rua das Flores, 123">
-                            </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold">
-                                    Cidade
-                                </label>
-                                <input id="cidade"
-                                    type="text"
-                                    class="form-control">
-                            </div>
-
-                            <div class="col-md-1">
-                                <label class="form-label small fw-bold">
-                                    Estado (UF)
-                                </label>
-                                <input id="estado"
-                                    type="text"
-                                    class="form-control"
-                                    maxlength="2">
-                            </div>
-
-                            <div class="col-12 mt-2">
-                                <hr class="mb-2">
-                                <p class="small fw-bold text-muted mb-2">
-                                    <i class="fa-solid fa-note-sticky me-1"></i>
-                                    Observações
-                                </p>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label small fw-bold">
-                                    Observação
-                                </label>
-                                <textarea id="observacao"
-                                        class="form-control"
-                                        rows="3"
-                                        placeholder="Informações adicionais sobre a empresa..."></textarea>
-                            </div>
-
-                            <div class="col-12 mt-4 text-end">
-                                <button type="button"
-                                        class="btn btn-light me-2"
-                                        onclick="showList()">
-                                    Cancelar
-                                </button>
-
-                                <button type="submit"
-                                        class="btn btn-dark px-4"
-                                        id="btn-submit">
-                                    Salvar Empresa
-                                </button>
-                            </div>
-
-                        </form>
+                    <div class="input-group" style="max-width: 340px;">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                        </span>
+                        <input type="text"
+                               id="input-busca"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Buscar empresa por nome..."
+                               oninput="buscarEmpresas()">
                     </div>
-                </section>
 
-            </main>
-        </div>
-
-        <!-- MODAL PEDIDOS DA EMPRESA -->
-        <div class="modal fade" id="modalPedidosEmpresa" tabindex="-1">
-            <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div>
-                            <h5 class="modal-title mb-0" id="modalPedidosEmpresaTitulo">
-                                Pedidos da Empresa
-                            </h5>
-                            <small class="text-muted" id="modalPedidosEmpresaSubtitulo"></small>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" id="modalPedidosEmpresaBody"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL DETALHE DO PEDIDO -->
-        <div class="modal fade" id="modalDetalhePedido" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div>
-                            <h5 class="modal-title mb-0" id="modalDetalheTitulo">
-                                Detalhes do Pedido
-                            </h5>
-                            <small class="text-muted" id="modalDetalheSubtitulo"></small>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" id="modalDetalheBody"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TOAST -->
-        <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
-            <div id="liveToast"
-                class="toast align-items-center text-bg-success border-0">
-                <div class="d-flex">
-                    <div class="toast-body" id="toast-message"></div>
-                    <button type="button"
-                            class="btn-close btn-close-white me-2 m-auto"
-                            data-bs-dismiss="toast">
+                    <button class="btn btn-dark btn-save"
+                            onclick="showForm('cadastrar')">
+                        <i class="fa-solid fa-plus me-2"></i>
+                        Nova Empresa
                     </button>
                 </div>
-            </div>
-        </div>
 
-        <!-- MODAL DE CONFIRMAÇÃO -->
-        <div class="modal fade"
-            id="confirmModal"
-            tabindex="-1"
-            aria-labelledby="confirmModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+                <div class="row g-4" id="empresa-list"></div>
+            </section>
 
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">
-                            Confirmação
-                        </h5>
-                        <button type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Fechar"></button>
+            <!-- FORMULÁRIO -->
+            <section id="section-form" style="display:none;">
+                <div class="d-flex align-items-center mb-3">
+                    <button class="btn btn-light btn-sm me-3 border"
+                            onclick="showList()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+
+                    <div>
+                        <h2 id="form-title" class="h4 mb-0">
+                            Nova Empresa
+                        </h2>
+                        <p class="text-muted small mb-0">
+                            Preencha os dados da Empresa
+                        </p>
                     </div>
-
-                    <div class="modal-body">
-                        Deseja realmente excluir essa empresa?
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
-
-                        <button type="button"
-                                id="confirm-delete-btn"
-                                class="btn btn-danger">
-                            Excluir
-                        </button>
-                    </div>
-
                 </div>
+
+                <div class="card p-4 border-0 shadow-sm">
+                    <form class="row g-3" id="empresa-form">
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Razão Social *</label>
+                            <input id="razao_social" type="text" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Nome Comprador *</label>
+                            <input id="nome_comprador" type="text" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">CNPJ *</label>
+                            <input id="cnpj"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="00.000.000/0000-00"
+                                   required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Inscrição Estadual *</label>
+                            <input id="ie" type="text" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Telefone *</label>
+                            <input id="telefone"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="(00) 00000-0000"
+                                   required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">E-mail *</label>
+                            <input id="email" type="email" class="form-control" required>
+                        </div>
+
+                        <!-- ENDEREÇO -->
+                        <div class="col-12 mt-2">
+                            <hr class="mb-2">
+                            <p class="small fw-bold text-muted mb-2">
+                                <i class="fa-solid fa-location-dot me-1"></i>
+                                Endereço
+                            </p>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">CEP</label>
+                            <input id="cep" type="text" class="form-control" placeholder="00000-000">
+                        </div>
+
+                        <div class="col-md-7">
+                            <label class="form-label small fw-bold">Rua / Logradouro</label>
+                            <input id="rua"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Ex: Rua das Flores, 123">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Cidade</label>
+                            <input id="cidade" type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-1">
+                            <label class="form-label small fw-bold">Estado (UF)</label>
+                            <input id="estado"
+                                   type="text"
+                                   class="form-control"
+                                   maxlength="2">
+                        </div>
+
+                        <!-- OBSERVAÇÃO -->
+                        <div class="col-12 mt-2">
+                            <hr class="mb-2">
+                            <p class="small fw-bold text-muted mb-2">
+                                <i class="fa-solid fa-note-sticky me-1"></i>
+                                Observações
+                            </p>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Observação</label>
+                            <textarea id="observacao"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Informações adicionais sobre a empresa..."></textarea>
+                        </div>
+
+                        <!-- BOTÕES -->
+                        <div class="col-12 mt-4 text-end">
+                            <button type="button"
+                                    class="btn btn-light me-2"
+                                    onclick="showList()">
+                                Cancelar
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-dark px-4"
+                                    id="btn-submit">
+                                Salvar Empresa
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL PEDIDOS -->
+    <div class="modal fade" id="modalPedidosEmpresa" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title mb-0" id="modalPedidosEmpresaTitulo">
+                            Pedidos da Empresa
+                        </h5>
+                        <small class="text-muted" id="modalPedidosEmpresaSubtitulo"></small>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="modalPedidosEmpresaBody"></div>
+
             </div>
         </div>
+    </div>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+    <!-- MODAL DETALHE -->
+    <div class="modal fade" id="modalDetalhePedido" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title mb-0" id="modalDetalheTitulo">
+                            Detalhes do Pedido
+                        </h5>
+                        <small class="text-muted" id="modalDetalheSubtitulo"></small>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="modalDetalheBody"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
+        <div id="liveToast" class="toast align-items-center text-bg-success border-0">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message"></div>
+                <button type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Deseja realmente excluir essa empresa?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="button"
+                            id="confirm-delete-btn"
+                            class="btn btn-danger">
+                        Excluir
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

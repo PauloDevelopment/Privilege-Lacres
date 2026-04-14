@@ -80,6 +80,22 @@ function getToken() {
     return localStorage.getItem("token");
 }
 
+function showToast(message, type = "danger") {
+    const toastEl = document.getElementById("liveToast");
+    const messageBox = document.getElementById("toast-message");
+
+    if (!toastEl || !messageBox) {
+        alert(message);
+        return;
+    }
+
+    messageBox.innerText = message;
+    toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+
+    const bsToast = new bootstrap.Toast(toastEl);
+    bsToast.show();
+}
+
 async function fetchAuth(url, options = {}) {
     const token = getToken();
 
@@ -99,15 +115,25 @@ async function fetchAuth(url, options = {}) {
 
     if (response.status === 401) {
         localStorage.removeItem("token");
-        alert("Sessão expirada!");
-        window.location.href = "/login";
+
+        showToast("Sessão expirada! Faça login novamente.", "danger");
+
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1500);
+
         return;
     }
 
     if (response.status === 422) {
         localStorage.removeItem("token");
-        alert("Você não está logado!");
-        window.location.href = "/login";
+
+        showToast("Você não está logado!", "danger");
+
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1500);
+
         return;
     }
 
@@ -116,5 +142,39 @@ async function fetchAuth(url, options = {}) {
 
 function logout() {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+
+    showToast("Logout realizado com sucesso!", "success");
+
+    setTimeout(() => {
+        window.location.href = "/";
+    }, 1000);
+}
+
+async function requireAuth() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        window.location.href = "/";
+        return;
+    }
+
+    try {
+        const response = await fetch("/usuarios/me", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            localStorage.removeItem("token");
+            window.location.href = "/";
+            return;
+        }
+
+        document.body.style.display = "block";
+
+    } catch (err) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+    }
 }

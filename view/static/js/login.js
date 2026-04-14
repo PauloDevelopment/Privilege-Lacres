@@ -1,10 +1,27 @@
-if (localStorage.getItem("token")) {
-    window.location.href = "/";
-}
-
 const API_URL = "/usuarios/login";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        try {
+            const response = await fetch("/usuarios/me", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                window.location.href = "/empresas-view";
+                return;
+            } else {
+                localStorage.removeItem("token");
+            }
+        } catch (err) {
+            localStorage.removeItem("token");
+        }
+    }
+
     const form = document.getElementById("login-form");
 
     form.addEventListener("submit", async (e) => {
@@ -34,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("token", data.access_token);
 
             // redireciona
-            window.location.href = "/";
+            window.location.href = "/empresas-view";
 
         } catch (err) {
             document.getElementById("login-message").innerText =

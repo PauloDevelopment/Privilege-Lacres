@@ -1,10 +1,14 @@
-if (!localStorage.getItem("token")) {
-    alert("Você não está logado!");
-    window.location.href = "/login";
-}
-
 let empresaEditando = null;
 let empresaParaDeletar = null;
+
+// Ao carregar a página
+document.addEventListener("DOMContentLoaded", async () => {
+    await requireAuth();
+    carregarEmpresas();
+
+    const form = document.getElementById("empresa-form");
+    if (form) form.addEventListener("submit", salvarEmpresa);
+});
 
 // Toast
 function showToast(message, type="success") {
@@ -18,24 +22,15 @@ function showToast(message, type="success") {
     bsToast.show();
 }
 
-// Ao carregar a página
-document.addEventListener("DOMContentLoaded", () => {
-    carregarEmpresas();
-
-    const form = document.getElementById("empresa-form");
-    if (form) form.addEventListener("submit", salvarEmpresa);
-});
-
-// ✅ ALTERADO: agora aceita um termo de busca
+// Lista empresas cadastradas
 async function carregarEmpresas(termo = '') {
     const url = termo ? `/empresas/buscar?q=${encodeURIComponent(termo)}` : '/empresas';
-    const response = await fetch(url);
+    const response = await fetchAuth(url);
     const empresas = await response.json();
 
     const container = document.getElementById("empresa-list");
     container.innerHTML = "";
 
-    // ✅ NOVO: mensagem quando não encontra nada
     if (empresas.length === 0) {
         container.innerHTML = `
             <div class="col-12 text-center py-5 text-muted">
@@ -137,9 +132,8 @@ async function salvarEmpresa(event) {
         method="PUT";
     }
 
-    const response = await fetch(url, {
+    const response = await fetchAuth(url, {
         method: method,
-        headers: {"Content-Type":"application/json"},
         body: JSON.stringify(data)
     });
 
@@ -158,7 +152,7 @@ async function salvarEmpresa(event) {
 
 // Carrega dados para edição
 async function editarEmpresa(id){
-    const response = await fetch(`/empresas/${id}`);
+    const response = await fetchAuth(`/empresas/${id}`);
     const data = await response.json();
     const empresa = data.empresa;
 
@@ -205,7 +199,7 @@ async function deletarEmpresa(id) {
     const newBtn = document.getElementById("confirm-delete-btn");
 
     newBtn.addEventListener("click", async () => {
-        const response = await fetch(`/empresas/${empresaParaDeletar}`, { method: "DELETE" });
+        const response = await fetchAuth(`/empresas/${empresaParaDeletar}`, { method: "DELETE" });
         const result = await response.json();
 
         if (response.ok) {
@@ -228,71 +222,23 @@ async function abrirPedidosEmpresa(id, nome) {
     subtitulo.textContent = '';
     body.innerHTML = `
         <div class="text-center py-4">
-            <div class="spinner-border text-primary" role="status"></div>
+            <div class="spinner-border text-primary"></div>
             <p class="mt-2 text-muted small">Carregando pedidos...</p>
         </div>`;
     modal.show();
 
     try {
-        const response = await fetch(`/empresas/${id}/pedidos`);
+        const response = await fetchAuth(`/empresas/${id}/pedidos`);
         const data = await response.json();
 
         subtitulo.textContent = `${data.total} pedido(s) encontrado(s)`;
 
         if (data.total === 0) {
-            body.innerHTML = `
-                <div class="text-center py-5 text-muted">
-                    <i class="fa-solid fa-file-circle-xmark fa-2x mb-3"></i>
-                    <p>Nenhum pedido cadastrado para esta empresa.</p>
-                </div>`;
+            body.innerHTML = `<p class="text-center text-muted">Nenhum pedido.</p>`;
             return;
         }
 
-        const statusClass = (status) => {
-            if (status === 'Pendente')     return 'bg-warning text-dark';
-            if (status === 'Em Produção')  return 'bg-primary';
-            if (status === 'Concluído')    return 'bg-success';
-            return 'bg-secondary';
-        };
-
-        let linhas = data.pedidos.map(p => `
-            <tr>
-                <td class="fw-bold">${p.numero_pedido}</td>
-                <td>${p.data || '—'}</td>
-                <td><span class="badge ${statusClass(p.status)}">${p.status || '—'}</span></td>
-                <td>${p.nf || '—'}</td>
-                <td>${p.vencimento || '—'}</td>
-                <td>${p.data_entrega || '—'}</td>
-                <td class="text-end fw-bold">
-                    R$ ${(p.total_pedido || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-                </td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-outline-primary" 
-                            onclick="abrirDetalhePedido(${p.pedido_id})">
-                        <i class="fa-solid fa-eye me-1"></i> Ver Detalhes
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-
-        body.innerHTML = `
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nº Pedido</th>
-                            <th>Data</th>
-                            <th>Status</th>
-                            <th>NF</th>
-                            <th>Vencimento</th>
-                            <th>Entrega</th>
-                            <th class="text-end">Total</th>
-                            <th class="text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>${linhas}</tbody>
-                </table>
-            </div>`;
+        body.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
     } catch (err) {
         body.innerHTML = `<p class="text-danger text-center">Erro ao carregar pedidos.</p>`;
@@ -321,7 +267,7 @@ async function abrirDetalhePedido(pedidoId) {
     modal.show();
 
     try {
-        const response = await fetch(`/pedidos/${pedidoId}`);
+        const response = await fetchAuth(`/pedidos/${pedidoId}`);
         const p = await response.json();
 
         titulo.textContent = `Pedido Nº ${p.numero_pedido}`;
