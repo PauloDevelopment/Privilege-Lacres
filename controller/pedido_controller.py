@@ -144,17 +144,7 @@ def buscar_pedido(pedido_id):
 def listar_pedidos():
     pedidos = db.session.query(Pedido).all()
 
-    return jsonify([
-        {
-            'pedido_id': p.pedido_id,
-            'numero_pedido': p.numero_pedido,
-            'id_empresa': p.id_empresa,
-            'data': p.data.strftime("%d/%m/%Y") if p.data else None,
-            'status': p.status,
-            'total': p.soma_total
-        }
-        for p in pedidos
-    ]), 200
+    return jsonify([p.to_dict() for p in pedidos]), 200
 
 
 @pedido_bp.route('/<int:id_pedido>', methods=['DELETE'])

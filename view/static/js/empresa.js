@@ -238,7 +238,54 @@ async function abrirPedidosEmpresa(id, nome) {
             return;
         }
 
-        body.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    body.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Nº Pedido</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>NF</th>
+                        <th>Vencimento</th>
+                        <th>Entrega</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.pedidos.map(p => `
+                        <tr onclick="abrirDetalhePedido(${p.pedido_id})" style="cursor:pointer;">
+                            <td class="fw-bold">${p.numero_pedido}</td>
+                            <td>${p.data || '-'}</td>
+                            <td>
+                                <span class="badge ${
+                                    p.status === 'Pendente' ? 'bg-warning text-dark' :
+                                    p.status === 'Em Produção' ? 'bg-primary' :
+                                    'bg-success'
+                                }">
+                                    ${p.status}
+                                </span>
+                            </td>
+                            <td>${p.nf || '-'}</td>
+                            <td>${p.vencimento || '-'}</td>
+                            <td>${p.data_entrega || '-'}</td>
+                            <td class="text-end fw-bold">
+                                R$ ${(p.total_pedido || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary btn-detalhe""
+                                    onclick="event.stopPropagation(); abrirDetalhePedido(${p.pedido_id})">
+                                    <i class="fa-solid fa-eye me-1"></i>
+                                    Ver Detalhes
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        `;
 
     } catch (err) {
         body.innerHTML = `<p class="text-danger text-center">Erro ao carregar pedidos.</p>`;

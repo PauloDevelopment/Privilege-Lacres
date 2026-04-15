@@ -70,4 +70,19 @@ body {
     border-radius: 8px; 
 }
 
-/* Adicione o restante dos seus estilos aqui... */
+.btn-detalhe {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.btn-detalhe:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.btn-detalhe:active {
+    background-color: #0b5ed7 !important;
+    color: #fff !important;
+    transform: scale(0.97);
+}

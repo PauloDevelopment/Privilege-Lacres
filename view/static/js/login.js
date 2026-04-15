@@ -42,8 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const data = await response.json();
 
             if (!response.ok) {
-                document.getElementById("login-message").innerText =
-                    data.error || "Erro ao fazer login";
+                showToast(data.error || data.erro || "Erro ao fazer login", "danger");
                 return;
             }
 
@@ -54,8 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "/empresas-view";
 
         } catch (err) {
-            document.getElementById("login-message").innerText =
-                "Erro de conexão com o servidor";
+            showToast("Erro de conexão com o servidor", "danger");
         }
     });
 });

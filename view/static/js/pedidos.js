@@ -78,7 +78,7 @@ async function listarPedidos() {
             corpoTabela.innerHTML += `
                 <tr>
                     <td class="fw-bold">${p.numero_pedido}</td>
-                    <td class="text-primary">Empresa: ${p.id_empresa}</td>
+                    <td class="fw-bold text-primary">${p.empresa}</td>
                     <td>${p.data}</td>
                     <td><span class="badge ${statusClass} px-3">${p.status}</span></td>
                     <td class="text-end fw-bold text-dark">R$ ${totalCalculado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
@@ -111,12 +111,15 @@ function adicionarLinhaItem(dados = {}) {
     
     div.innerHTML = `
         <div class="col-md-6">
+            <label class="form-label small fw-bold">Produto</label>
             <input type="text" class="form-control campo-produto" placeholder="Produto" value="${dados.produto || ''}" required>
         </div>
         <div class="col-md-2">
+            <label class="form-label small fw-bold">Quantidade Milheiro</label>
             <input type="number" step="0.001" class="form-control text-center campo-quantidade" placeholder="Qtd" oninput="calcularTotalPedido()" value="${dados.quantidade || 1}" required>
         </div>
         <div class="col-md-3">
+            <label class="form-label small fw-bold">Valor Milheiro</label>
             <input type="number" step="0.01" class="form-control campo-valor" placeholder="Valor Milheiro" oninput="calcularTotalPedido()" value="${dados.valor_milheiro || 0}" required>
         </div>
         <div class="col-md-1">

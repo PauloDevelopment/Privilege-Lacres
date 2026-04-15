@@ -16,7 +16,7 @@ def admin_required(fn):
         claims = get_jwt()
 
         if claims.get("role") != "admin":
-            return jsonify({'error': 'Acesso negado: apenas admin'}), 403
+            return jsonify({'error': 'Acesso negado: apenas admin!'}), 403
 
         return fn(*args, **kwargs)
 
@@ -210,10 +210,10 @@ def login():
     usuario = Usuario.query.filter_by(email=email).first()
 
     if not usuario:
-        return jsonify({'error': 'Usuário não encontrado'}), 404
+        return jsonify({'error': 'Usuário não encontrado!'}), 404
         
     if not check_password_hash(usuario.password, password):
-        return jsonify({'error': 'Senha inválida'}), 401      
+        return jsonify({'error': 'Senha inválida!'}), 401      
     
     access_token = create_access_token(
         identity=str(usuario.id_usuario),

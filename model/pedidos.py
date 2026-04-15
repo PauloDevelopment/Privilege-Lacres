@@ -41,6 +41,7 @@ class Pedido(db.Model):
             'data_entrega': self.data_entrega.strftime("%d/%m/%Y") if self.data_entrega else None,
             'status': self.status,
             'id_empresa': self.id_empresa,
+            'empresa': self.empresa.razao_social if self.empresa else None,
             'total_pedido': self.soma_total,
             'itens': [item.to_dict() for item in self.itens]
         }
