@@ -18,5 +18,5 @@ class Usuario(db.Model):
             'name': self.name,
             'email': self.email,
             'role': self.role,
-            'data_cadastro': self.data_cadastro
+            'data_cadastro': self.data_cadastro.strftime("%d/%m/%Y %H:%M:%S") if self.data_cadastro else None
         }

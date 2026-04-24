@@ -47,6 +47,8 @@ async function listarUsuarios() {
                         </span>
                     </td>
 
+                    <td>${user.data_cadastro}</td>
+
                     <td class="text-center">
 
                         <button class="btn btn-link text-success text-decoration-none small"

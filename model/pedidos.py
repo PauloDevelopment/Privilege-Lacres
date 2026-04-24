@@ -21,7 +21,6 @@ class Pedido(db.Model):
 
     status = db.Column(db.String(20))
 
-
     empresa = relationship('Empresa', back_populates='pedidos')
     itens = relationship('ItemPedido', backref='pedido', cascade="all, delete-orphan")
 
