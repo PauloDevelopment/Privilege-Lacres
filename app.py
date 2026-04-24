@@ -35,6 +35,10 @@ def create_app():
     @app.route("/pedidos-view")
     def pedidos_view():
         return render_template("pedidos.html")
+    
+    @app.route("/usuarios-view")
+    def admin_view():
+        return render_template("admin.html")
 
     return app
 

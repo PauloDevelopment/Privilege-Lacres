@@ -171,10 +171,45 @@ async function requireAuth() {
             return;
         }
 
+        const usuario = await response.json();
+
+        if (usuario.role === "admin") {
+            const menu = document.getElementById("menu-admin");
+            if (menu) menu.classList.remove("d-none");
+        }
+
         document.body.style.display = "block";
 
     } catch (err) {
         localStorage.removeItem("token");
         window.location.href = "/";
     }
+}
+
+async function requireAdmin() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        window.location.href = "/";
+        return;
+    }
+
+    const response = await fetch("/usuarios/me", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+        return;
+    }
+
+    const usuario = await response.json();
+
+    if (usuario.role !== "admin") {
+        window.location.href = "/empresas-view";
+        return;
+    }
+
+    document.body.style.display = "block";
 }

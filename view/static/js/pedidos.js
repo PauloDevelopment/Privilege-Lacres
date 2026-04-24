@@ -21,10 +21,7 @@ function showToast(message, type = "success") {
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
 }
-
-/**
- * 1. LISTAGEM DE PEDIDOS (READ)
- */
+// LISTAGEM DE PEDIDOS (READ)
 let pedidoParaDeletar = null;
 
 async function excluirPedido(id) {
@@ -98,9 +95,7 @@ async function listarPedidos() {
     }
 }
 
-/**
- * 2. ITENS DINÂMICOS
- */
+// ITENS DINÂMICOS
 function adicionarLinhaItem(dados = {}) {
     const container = document.getElementById('container-itens');
     const idLinha = Date.now();
@@ -137,9 +132,7 @@ function removerLinhaItem(id) {
     calcularTotalPedido();
 }
 
-/**
- * 3. TOTAL
- */
+// TOTAL
 function calcularTotalPedido() {
     let totalGeral = 0;
     const linhas = document.querySelectorAll('.item-row');
@@ -154,9 +147,7 @@ function calcularTotalPedido() {
         `R$ ${totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
-/**
- * 4. SALVAR PEDIDO
- */
+// SALVAR PEDIDO
 async function salvarPedidoCompleto() {
     const id = document.getElementById('pedido_id').value;
     
@@ -201,9 +192,7 @@ async function salvarPedidoCompleto() {
     }
 }
 
-/**
- * 5. AUXILIARES
- */
+// AUXILIARES
 function prepararNovoPedido() {
     document.getElementById('formPedido').reset();
     document.getElementById('pedido_id').value = '';
