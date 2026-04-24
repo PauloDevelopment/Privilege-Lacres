@@ -180,6 +180,8 @@ async function requireAuth() {
 
         document.body.style.display = "block";
 
+        await carregarUsuarioLogado();
+
     } catch (err) {
         localStorage.removeItem("token");
         window.location.href = "/";
@@ -212,4 +214,6 @@ async function requireAdmin() {
     }
 
     document.body.style.display = "block";
+
+    await carregarUsuarioLogado();
 }

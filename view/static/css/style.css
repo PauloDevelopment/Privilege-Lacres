@@ -86,3 +86,7 @@ body {
     color: #fff !important;
     transform: scale(0.97);
 }
+
+.dropdown-item.text-danger:hover {
+    background-color: #f8d7da;
+}

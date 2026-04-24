@@ -20,6 +20,7 @@
     <!-- JS -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/empresa.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/usuario.js') }}"></script>
 </head>
 
 <body style="display: none;">
@@ -61,11 +62,35 @@
                 </a>
             </nav>
 
-            <div class="ms-auto d-flex align-items-center gap-3">
-                <a href="#" onclick="logout()" class="nav-link text-danger">
-                    <i class="fa-solid fa-right-from-bracket me-1"></i>
-                    Sair
+            <div class="ms-auto dropdown">
+                <a class="nav-link dropdown-toggle text-dark fw-semibold"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                id="userDropdown">
+
+                    <i class="fa-solid fa-user me-1"></i>
+                    <span id="user-name">Carregando...</span>
                 </a>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li>
+                        <a class="dropdown-item" href="#" onclick="abrirPerfil()">
+                            <i class="fa-solid fa-user-gear me-2"></i>
+                            Meu Perfil
+                        </a>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
             </div>
         </header>
 
@@ -278,15 +303,42 @@
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
-        <div id="liveToast" class="toast align-items-center text-bg-success border-0">
-            <div class="d-flex">
-                <div class="toast-body" id="toast-message"></div>
-                <button type="button"
-                        class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast">
-                </button>
+    <!-- MODAL USUÁRIO -->
+    <div class="modal fade" id="modalPerfil" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0">
+
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Meu Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="formPerfil">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nome</label>
+                            <input type="text" id="perfil_nome" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">E-mail</label>
+                            <input type="email" id="perfil_email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nova senha</label>
+                            <input type="password" id="perfil_senha" class="form-control">
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-dark" onclick="salvarPerfil()">Salvar</button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -322,6 +374,20 @@
             </div>
         </div>
     </div>
+
+    <!-- TOAST -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
+        <div id="liveToast" class="toast align-items-center text-bg-success border-0">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message"></div>
+                <button type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast">
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
