@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Privilege Lacres</title>
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+        <!-- JS -->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/usuario.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+    </head>
+
+    <body style="display: none;">
+        <div class="container-fluid">
+
+            <!-- HEADER -->
+            <header class="main-header d-flex align-items-center px-4 py-3">
+                <div class="logo-area d-flex align-items-center">
+                    <div class="icon-box me-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h1 class="m-0 h5 fw-bold">Privilege Lacres</h1>
+                        <small class="text-danger">Sistema de Gestão</small>
+                    </div>
+                </div>
+
+                <nav class="ms-5 d-flex gap-4">
+                    <a href="/dashboard-view"
+                       class="nav-link active fw-bold border-bottom border-primary border-2 pb-1 text-primary">
+                        <i class="fa-solid fa-table-cells-large me-1"></i>
+                        Dashboard
+                    </a>
+
+                    <a href="/empresas-view" class="nav-link text-muted">
+                        <i class="fa-solid fa-building me-1"></i>
+                        Empresas
+                    </a>
+
+                    <a href="/pedidos-view" class="nav-link text-muted">
+                        <i class="fa-solid fa-file-lines me-1"></i>
+                        Pedidos
+                    </a>
+
+                    <a href="/usuarios-view" id="menu-admin" class="nav-link text-muted d-none">
+                        <i class="fa-solid fa-users me-1"></i>
+                        Usuários
+                    </a>
+                </nav>
+
+                <div class="ms-auto dropdown">
+                    <a class="nav-link dropdown-toggle text-dark fw-semibold"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <i class="fa-solid fa-user me-1"></i>
+                        <span id="user-name">Carregando...</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="abrirPerfil()">
+                                <i class="fa-solid fa-user-gear me-2"></i>
+                                Meu Perfil
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                <i class="fa-solid fa-right-from-bracket me-2"></i>
+                                Sair
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+
+            <!-- MAIN -->
+            <main class="container mt-5">
+
+                <div class="mb-4">
+                    <h2 class="h4 mb-0">Dashboard</h2>
+                    <p class="text-muted small mb-0">Visão geral do sistema</p>
+                </div>
+
+                <!-- CARDS DE MÉTRICAS -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+                            <div class="dash-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted small mb-0">Total de Empresas</p>
+                                <h3 class="fw-bold mb-0" id="card-empresas">—</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+                            <div class="dash-icon bg-success bg-opacity-10 text-success">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted small mb-0">Total de Pedidos</p>
+                                <h3 class="fw-bold mb-0" id="card-pedidos">—</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+                            <div class="dash-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted small mb-0">Faturamento Total</p>
+                                <h3 class="fw-bold mb-0" id="card-faturamento">—</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA 2: pedidos por mês + status -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h6 class="fw-bold mb-3">Pedidos por Mês</h6>
+                            <div style="position:relative; height:280px;">
+                                <canvas id="chartMes" role="img" aria-label="Gráfico de pedidos por mês">Pedidos por mês.</canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm p-4 h-100">
+                            <h6 class="fw-bold mb-3">Status dos Pedidos</h6>
+                            <div id="legend-status" class="d-flex flex-wrap gap-2 mb-3"></div>
+                            <div style="position:relative; height:210px;">
+                                <canvas id="chartStatus" role="img" aria-label="Status dos pedidos">Status dos pedidos.</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA 3: top clientes + top produtos -->
+                <div class="row g-3 mb-5">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h6 class="fw-bold mb-3">Top 5 Clientes por Faturamento</h6>
+                            <div style="position:relative;" id="wrap-clientes">
+                                <canvas id="chartClientes" role="img" aria-label="Top clientes por faturamento">Top clientes.</canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm p-4">
+                            <h6 class="fw-bold mb-3">Top 5 Produtos Mais Pedidos</h6>
+                            <div style="position:relative;" id="wrap-produtos">
+                                <canvas id="chartProdutos" role="img" aria-label="Produtos mais pedidos">Produtos mais pedidos.</canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- MODAL PERFIL -->
+        <div class="modal fade" id="modalPerfil" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content border-0">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">Meu Perfil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formPerfil">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nome</label>
+                                <input type="text" id="perfil_nome" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">E-mail</label>
+                                <input type="email" id="perfil_email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nova senha</label>
+                                <input type="password" id="perfil_senha" class="form-control">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-dark" onclick="salvarPerfil()">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
+            <div id="liveToast" class="toast align-items-center border-0">
+                <div class="d-flex">
+                    <div class="toast-body" id="toast-message"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Chart.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+        <!-- Chart Data Labels Plugin -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    </body>
+</html>

@@ -67,7 +67,7 @@ async function listarPedidos() {
         corpoTabela.innerHTML = '';
 
         pedidos.forEach(p => {
-            const totalCalculado = p.total || 0;
+            const totalCalculado = p.total_pedido || 0;
             
             const statusClass = p.status === 'Pendente' ? 'bg-warning text-dark' : 
                                 p.status === 'Em Produção' ? 'bg-primary' : 'bg-success';

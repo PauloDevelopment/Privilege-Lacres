@@ -40,6 +40,10 @@ def create_app():
     def admin_view():
         return render_template("admin.html")
 
+    @app.route("/dashboard-view")
+    def dashboard_view():
+        return render_template("dashboard.html")
+        
     return app
 
 app = create_app()
