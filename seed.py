@@ -1,25 +1,29 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 from db import db
-from app import create_app
+from app import app
 from model.usuario import Usuario
 import pytz
 import os
 
+
 def seed_user():
-    app = create_app()
+    email = os.getenv("EMAIL")
+    password = os.getenv("PASSWORD")
+
+    if not email or not password:
+        raise RuntimeError("EMAIL e PASSWORD precisam estar definidos no .env")
 
     with app.app_context():
-
-        existing_user = Usuario.query.filter_by(email="admin@email.com").first()
+        existing_user = Usuario.query.filter_by(email=email).first()
         if existing_user:
-            print("Usuário já existe!")
+            print("Usuário admin já existe!")
             return
 
         user = Usuario(
             name="Admin",
-            email=os.getenv("EMAIL"),
-            password=generate_password_hash(os.getenv("PASSWORD")),
+            email=email,
+            password=generate_password_hash(password),
             role="admin",
             data_cadastro=datetime.now(pytz.timezone('America/Sao_Paulo'))
         )

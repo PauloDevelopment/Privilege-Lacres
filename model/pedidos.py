@@ -44,6 +44,3 @@ class Pedido(db.Model):
             'total_pedido': self.soma_total,
             'itens': [item.to_dict() for item in self.itens]
         }
-    
-    
-    

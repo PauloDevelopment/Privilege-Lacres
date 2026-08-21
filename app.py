@@ -4,6 +4,7 @@ from datetime import timedelta
 from controller.empresa_controller import empresa_bp
 from controller.pedido_controller import pedido_bp
 from controller.usuario_controller import usuario_bp
+from controller.produto_controller import produto_bp
 import os
 from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
@@ -14,7 +15,11 @@ def create_app():
     app = Flask(__name__, template_folder="view", static_folder="view/static")
 
     # Configuração JWT
-    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+    jwt_secret = os.getenv("JWT_SECRET_KEY")
+    if not jwt_secret:
+        raise RuntimeError("JWT_SECRET_KEY precisa estar definida no .env")
+
+    app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
     jwt = JWTManager(app)
 
@@ -23,6 +28,7 @@ def create_app():
     app.register_blueprint(empresa_bp, url_prefix="/empresas")
     app.register_blueprint(pedido_bp, url_prefix='/pedidos')
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
+    app.register_blueprint(produto_bp, url_prefix='/produtos')
 
     @app.route("/")
     def login_view():
@@ -35,6 +41,10 @@ def create_app():
     @app.route("/pedidos-view")
     def pedidos_view():
         return render_template("pedidos.html")
+
+    @app.route("/produtos-view")
+    def produtos_view():
+        return render_template("produtos.html")
     
     @app.route("/usuarios-view")
     def admin_view():

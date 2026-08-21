@@ -7,8 +7,8 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: privilege_management
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-privilege_management}
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -21,6 +21,8 @@ services:
   web:
     build: .
     container_name: flask_app
+    env_file:
+      - .env
     ports:
       - "5000:5000"
     volumes:

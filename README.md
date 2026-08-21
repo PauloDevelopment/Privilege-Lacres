@@ -58,3 +58,50 @@ docker-compose up -d --build
 
 - API: `http://localhost:5000/`
 - Frontend: `http://localhost:5000/`
+
+
+## 📦 CRUD de Produtos
+
+O projeto também possui gestão de produtos:
+
+- Listar produtos (`GET /produtos/`)
+- Buscar produto por ID (`GET /produtos/<id>`)
+- Buscar produtos por nome (`GET /produtos/buscar?q=...`)
+- Cadastrar produto (`POST /produtos/`)
+- Atualizar produto (`PUT /produtos/<id>`)
+- Deletar produto (`DELETE /produtos/<id>`)
+- Tela: `http://localhost:5000/produtos-view`
+
+Os pedidos continuam armazenando o nome e o valor do produto no item, preservando os pedidos já existentes. A tela de pedidos usa o cadastro de produtos como autocomplete e preenche automaticamente o valor do milheiro quando o nome selecionado existir no catálogo.
+
+## 🔐 Variáveis de ambiente
+
+Copie o arquivo de exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Variáveis obrigatórias para a aplicação/seed:
+
+```env
+JWT_SECRET_KEY=troque-por-uma-chave-segura-e-aleatoria
+EMAIL=admin@email.com
+PASSWORD=troque-esta-senha
+```
+
+A conexão MySQL já possui valores padrão compatíveis com o `docker-compose.yml`, mas também pode ser configurada no `.env` por `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` e `DB_NAME`.
+
+Para gerar uma chave JWT aleatória:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Depois, suba o projeto:
+
+```bash
+docker compose up -d --build
+```
+
+A aplicação fica em `http://localhost:5000`. O MySQL fica exposto na máquina host pela porta `3307`.

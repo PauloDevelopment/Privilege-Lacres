@@ -1,12 +1,16 @@
 document.addEventListener('DOMContentLoaded', async () => {
     await requireAuth();
-    listarPedidos();
-    carregarEmpresasSelect();
+
+    await Promise.all([
+        listarPedidos(),
+        carregarEmpresasSelect(),
+        carregarProdutosPedido()
+    ]);
 
     const params = new URLSearchParams(window.location.search);
     const editarId = params.get('editar');
     if (editarId) {
-        setTimeout(() => editarPedido(parseInt(editarId)), 800);
+        await editarPedido(parseInt(editarId));
     }
 });
 
@@ -134,6 +138,44 @@ async function excluirPedido(id) {
 
 
 // ============================================================
+// CATÁLOGO DE PRODUTOS
+// ============================================================
+let produtosPedido = [];
+
+async function carregarProdutosPedido() {
+    try {
+        const response = await fetchAuth('/produtos');
+        if (!response || !response.ok) return;
+
+        produtosPedido = await response.json();
+
+        const datalist = document.getElementById('produtos-disponiveis');
+        if (!datalist) return;
+
+        datalist.innerHTML = produtosPedido
+            .map(produto => `<option value="${produto.nome}"></option>`)
+            .join('');
+
+    } catch (error) {
+        console.warn('Não foi possível carregar o catálogo de produtos.', error);
+    }
+}
+
+function preencherValorProduto(input) {
+    const nome = input.value.trim().toLowerCase();
+    const produto = produtosPedido.find(p => p.nome.toLowerCase() === nome);
+    if (!produto) return;
+
+    const linha = input.closest('.item-row');
+    if (!linha) return;
+
+    const campoValor = linha.querySelector('.campo-valor');
+    campoValor.value = produto.valor_milheiro;
+    calcularTotalPedido();
+}
+
+
+// ============================================================
 // ITENS DINÂMICOS
 // ============================================================
 function adicionarLinhaItem(dados = {}) {
@@ -147,7 +189,7 @@ function adicionarLinhaItem(dados = {}) {
     div.innerHTML = `
         <div class="col-md-6">
             <label class="form-label small fw-bold">Produto</label>
-            <input type="text" class="form-control campo-produto" placeholder="Produto" value="${dados.produto || ''}" required>
+            <input type="text" list="produtos-disponiveis" class="form-control campo-produto" placeholder="Produto" onchange="preencherValorProduto(this)" value="${dados.produto || ''}" required>
         </div>
         <div class="col-md-2">
             <label class="form-label small fw-bold">Quantidade Milheiro</label>
@@ -296,3 +338,5 @@ async function editarPedido(id) {
         console.error("Erro ao carregar pedido:", error);
     }
 }
+
+window.preencherValorProduto = preencherValorProduto;
