@@ -232,5 +232,92 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
         <!-- Chart Data Labels Plugin -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+
+        <!-- BOTAO FLUTUANTE DO CHAT -->
+<button class="btn btn-primary rounded-circle shadow" id="btn-chat-toggle" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 9999;" onclick="toggleChat()">
+    <i class="fa-solid fa-robot fa-lg"></i>
+</button>
+
+<!-- JANELA DO CHAT -->
+<div class="card shadow-lg border-0 d-none" id="chat-window" style="position: fixed; bottom: 100px; right: 30px; width: 350px; height: 450px; z-index: 9999; display: flex; flex-direction: column;">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="fa-solid fa-sparkles me-2"></i> Assistente IA</h6>
+        <button class="btn-close btn-close-white btn-sm" onclick="toggleChat()"></button>
+    </div>
+    
+    <div class="card-body bg-light overflow-auto" id="chat-history" style="flex: 1;">
+        <div class="mb-2 text-start">
+            <span class="badge bg-secondary p-2 text-wrap" style="max-width: 80%;">Olá! Sou o assistente do Privilege Lacres. Como posso ajudar com seus dados hoje?</span>
+        </div>
+    </div>
+    
+    <div class="card-footer bg-white">
+        <div class="input-group">
+            <input type="text" id="chat-input" class="form-control" placeholder="Pergunte algo..." onkeypress="if(event.key === 'Enter') enviarMensagemIA()">
+            <button class="btn btn-primary" onclick="enviarMensagemIA()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleChat() {
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.classList.toggle('d-none');
+    }
+
+    async function enviarMensagemIA() {
+        const inputEl = document.getElementById('chat-input');
+        const historyEl = document.getElementById('chat-history');
+        const message = inputEl.value.trim();
+        
+        if (!message) return;
+
+        // Limpa o input e adiciona mensagem do usuário na tela
+        inputEl.value = '';
+        historyEl.innerHTML += `
+            <div class="mb-2 text-end">
+                <span class="badge bg-primary p-2 text-wrap text-start" style="max-width: 80%;">${message}</span>
+            </div>`;
+        historyEl.scrollTop = historyEl.scrollHeight; // rola para baixo
+
+        // Mostra indicador de carregando
+        const loadingId = 'loading-' + Date.now();
+        historyEl.innerHTML += `
+            <div class="mb-2 text-start" id="${loadingId}">
+                <span class="badge bg-secondary p-2 text-wrap text-muted"><i class="fa-solid fa-circle-notch fa-spin"></i> Pensando...</span>
+            </div>`;
+        historyEl.scrollTop = historyEl.scrollHeight;
+
+        try {
+            // Usa o SEU método fetchAuth existente para já passar o JWT!
+            const response = await fetchAuth('/chat/', {
+                method: 'POST',
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            document.getElementById(loadingId).remove(); // remove o loading
+
+            if (response.ok) {
+                historyEl.innerHTML += `
+                    <div class="mb-2 text-start">
+                        <span class="badge bg-secondary p-2 text-wrap text-start text-dark" style="background-color: #e9ecef !important; max-width: 80%;">
+                            ${data.response}
+                        </span>
+                    </div>`;
+            } else {
+                historyEl.innerHTML += `<div class="mb-2 text-center text-danger small">Erro: ${data.error}</div>`;
+            }
+
+        } catch (err) {
+            document.getElementById(loadingId).remove();
+            historyEl.innerHTML += `<div class="mb-2 text-center text-danger small">Falha na conexão com a IA.</div>`;
+        }
+        
+        historyEl.scrollTop = historyEl.scrollHeight;
+    }
+</script>
     </body>
 </html>

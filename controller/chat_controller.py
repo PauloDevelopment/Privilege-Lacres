@@ -34,7 +34,7 @@ def buscar_faturamento_empresa(nome_empresa: str):
 # 2. CONFIGURAÇÃO DO MODELO
 # ==========================================
 model = genai.GenerativeModel(
-    model_name='gemini-1.5-flash',
+    model_name='gemini-3.8-flash',  # Atualizado conforme exigência da API
     tools=[buscar_resumo_pedidos, buscar_faturamento_empresa],
     system_instruction="Você é o copiloto de IA do ERP Privilege Lacres. Responda de forma curta e profissional. Use as ferramentas disponíveis para consultar o banco de dados."
 )
