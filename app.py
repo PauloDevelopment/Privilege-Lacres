@@ -1,13 +1,17 @@
-from flask import Flask, render_template
-from db import init_db
+import os
 from datetime import timedelta
+
+from dotenv import load_dotenv
+from flask import Flask, render_template
+from flask_jwt_extended import JWTManager
+
 from controller.empresa_controller import empresa_bp
 from controller.pedido_controller import pedido_bp
-from controller.usuario_controller import usuario_bp
 from controller.produto_controller import produto_bp
-import os
-from dotenv import load_dotenv
-from flask_jwt_extended import JWTManager
+from controller.usuario_controller import usuario_bp
+from controller.chat_controller import chat_bp
+from db import init_db
+
 
 def create_app():
     load_dotenv()
@@ -29,6 +33,7 @@ def create_app():
     app.register_blueprint(pedido_bp, url_prefix='/pedidos')
     app.register_blueprint(usuario_bp, url_prefix='/usuarios')
     app.register_blueprint(produto_bp, url_prefix='/produtos')
+    app.register_blueprint(chat_bp, url_prefix="/chat")
 
     @app.route("/")
     def login_view():
