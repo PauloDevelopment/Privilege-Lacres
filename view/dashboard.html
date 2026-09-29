@@ -267,57 +267,45 @@
         chatWindow.classList.toggle('d-none');
     }
 
-    async function enviarMensagemIA() {
-        const inputEl = document.getElementById('chat-input');
-        const historyEl = document.getElementById('chat-history');
-        const message = inputEl.value.trim();
-        
-        if (!message) return;
+function addMsg(text, cls, style = '') {
+    const historyEl = document.getElementById('chat-history');
+    const wrap = document.createElement('div');
+    wrap.className = 'mb-2 ' + cls;
+    const span = document.createElement('span');
+    span.className = 'badge p-2 text-wrap text-start ' + (cls === 'text-end' ? 'bg-primary' : 'bg-secondary');
+    span.style.maxWidth = '80%';
+    span.style.whiteSpace = 'pre-wrap';
+    span.textContent = text;          // seguro contra XSS
+    wrap.appendChild(span);
+    historyEl.appendChild(wrap);
+    historyEl.scrollTop = historyEl.scrollHeight;
+    return wrap;
+}
 
-        // Limpa o input e adiciona mensagem do usuário na tela
-        inputEl.value = '';
-        historyEl.innerHTML += `
-            <div class="mb-2 text-end">
-                <span class="badge bg-primary p-2 text-wrap text-start" style="max-width: 80%;">${message}</span>
-            </div>`;
-        historyEl.scrollTop = historyEl.scrollHeight; // rola para baixo
+async function enviarMensagemIA() {
+    const inputEl = document.getElementById('chat-input');
+    const message = inputEl.value.trim();
+    if (!message) return;
+    inputEl.value = '';
 
-        // Mostra indicador de carregando
-        const loadingId = 'loading-' + Date.now();
-        historyEl.innerHTML += `
-            <div class="mb-2 text-start" id="${loadingId}">
-                <span class="badge bg-secondary p-2 text-wrap text-muted"><i class="fa-solid fa-circle-notch fa-spin"></i> Pensando...</span>
-            </div>`;
-        historyEl.scrollTop = historyEl.scrollHeight;
+    addMsg(message, 'text-end');
+    const loading = addMsg('Pensando...', 'text-start');
 
-        try {
-            // Usa o SEU método fetchAuth existente para já passar o JWT!
-            const response = await fetchAuth('/chat/', {
-                method: 'POST',
-                body: JSON.stringify({ message: message })
-            });
+    try {
+        const response = await fetchAuth('/chat/', {
+            method: 'POST',
+            body: JSON.stringify({ message })
+        });
+        if (!response) { loading.remove(); return; }   // 401/422 já tratados no fetchAuth
 
-            const data = await response.json();
-            document.getElementById(loadingId).remove(); // remove o loading
-
-            if (response.ok) {
-                historyEl.innerHTML += `
-                    <div class="mb-2 text-start">
-                        <span class="badge bg-secondary p-2 text-wrap text-start text-dark" style="background-color: #e9ecef !important; max-width: 80%;">
-                            ${data.response}
-                        </span>
-                    </div>`;
-            } else {
-                historyEl.innerHTML += `<div class="mb-2 text-center text-danger small">Erro: ${data.error}</div>`;
-            }
-
-        } catch (err) {
-            document.getElementById(loadingId).remove();
-            historyEl.innerHTML += `<div class="mb-2 text-center text-danger small">Falha na conexão com a IA.</div>`;
-        }
-        
-        historyEl.scrollTop = historyEl.scrollHeight;
+        const data = await response.json();
+        loading.remove();
+        addMsg(response.ok ? data.response : 'Erro: ' + data.error, 'text-start');
+    } catch (err) {
+        loading.remove();
+        addMsg('Falha na conexão com a IA.', 'text-start');
     }
+}
 </script>
     </body>
 </html>
