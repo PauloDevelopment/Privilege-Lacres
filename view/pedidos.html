@@ -108,9 +108,14 @@
     </div>
 
 
-                    <button class="btn btn-dark btn-save" data-bs-toggle="modal" data-bs-target="#modalPedido" onclick="prepararNovoPedido()">
-                        <i class="fa-solid fa-plus me-2"></i> Novo Pedido
-                    </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-success" onclick="exportarRelatorioPedidos()">
+                            <i class="fa-solid fa-file-excel me-2"></i> Exportar Excel
+                        </button>
+                        <button class="btn btn-dark btn-save" data-bs-toggle="modal" data-bs-target="#modalPedido" onclick="prepararNovoPedido()">
+                            <i class="fa-solid fa-plus me-2"></i> Novo Pedido
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card p-3">
@@ -195,7 +200,6 @@
                                     </button>
                                 </div>
                                 <div id="container-itens"></div>
-                                <datalist id="produtos-disponiveis"></datalist>
                                 <div class="d-flex justify-content-end mt-3 p-3 bg-dark text-white rounded shadow-sm">
                                     <span class="me-3 opacity-75">Soma Total:</span>
                                     <h4 id="valor-total-pedido" class="mb-0 fw-bold">R$ 0,00</h4>
@@ -281,6 +285,8 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+        <script src="{{ url_for('static', filename='js/excel.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

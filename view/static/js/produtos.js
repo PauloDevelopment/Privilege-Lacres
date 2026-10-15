@@ -95,6 +95,33 @@ async function carregarProdutos(termo = '') {
     }
 }
 
+async function exportarRelatorioProdutos() {
+    try {
+        const response = await fetchAuth('/produtos');
+        if (!response) return;
+
+        const produtos = await response.json();
+        if (!response.ok) {
+            throw new Error(produtos.error || "Erro ao carregar produtos.");
+        }
+
+        baixarExcel("relatorio-produtos.xlsx", [{
+            nome: "Produtos",
+            colunas: ["ID", "Nome", "Valor do Milheiro (R$)", "Descrição", "Data de Cadastro"],
+            linhas: produtos.map(produto => [
+                produto.id_produto,
+                produto.nome,
+                produto.valor_milheiro,
+                produto.descricao,
+                produto.data_cadastro
+            ])
+        }]);
+    } catch (error) {
+        console.error("Erro ao exportar relatório de produtos:", error);
+        showToast(error.message || "Erro ao exportar relatório de produtos.", "danger");
+    }
+}
+
 async function salvarProduto(event) {
     event.preventDefault();
 

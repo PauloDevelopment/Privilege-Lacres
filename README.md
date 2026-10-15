@@ -21,6 +21,7 @@ Sistema de gestão empresarial em Flask + SQLAlchemy + MySQL, com cadastro de em
 ## 📦 Funcionalidades
 
 - CRUD de empresas, pedidos, produtos e usuários
+- Exportação de relatórios Excel nas telas de empresas, produtos e pedidos
 - Validações de telefone e CNPJ
 - Login com JWT e telas protegidas
 - Dashboard interativo com indicadores e gráficos (`/dashboard-view`)
@@ -57,7 +58,7 @@ Sistema de gestão empresarial em Flask + SQLAlchemy + MySQL, com cadastro de em
 - Deletar produto (`DELETE /produtos/<id>`)
 - Tela: `http://localhost:5000/produtos-view`
 
-Os pedidos continuam armazenando o nome e o valor do produto no item, preservando os pedidos já existentes. A tela de pedidos usa o cadastro de produtos como autocomplete e preenche automaticamente o valor do milheiro quando o nome selecionado existir no catálogo.
+Os pedidos continuam armazenando o nome e o valor do produto no item, preservando os pedidos já existentes. Na tela de pedidos, o produto é selecionado do catálogo e seu valor por milheiro é preenchido automaticamente; o subtotal de cada item e o total do pedido são atualizados conforme a quantidade.
 
 ### Usuários (`/usuarios`)
 

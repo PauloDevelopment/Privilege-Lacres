@@ -106,6 +106,45 @@ async function carregarEmpresas(termo = '') {
     });
 }
 
+async function exportarRelatorioEmpresas() {
+    try {
+        const response = await fetchAuth('/empresas');
+        if (!response) return;
+
+        const empresas = await response.json();
+        if (!response.ok) {
+            throw new Error(empresas.error || "Erro ao carregar empresas.");
+        }
+
+        baixarExcel("relatorio-empresas.xlsx", [{
+            nome: "Empresas",
+            colunas: [
+                "ID", "Razão Social", "Nome do Comprador", "CNPJ",
+                "Inscrição Estadual", "Telefone", "E-mail", "Data de Cadastro",
+                "Rua", "Cidade", "Estado", "CEP", "Observação"
+            ],
+            linhas: empresas.map(empresa => [
+                empresa.id_empresa,
+                empresa.razao_social,
+                empresa.nome_comprador,
+                empresa.cnpj,
+                empresa.ie,
+                empresa.telefone,
+                empresa.email,
+                empresa.data_cadastro,
+                empresa.rua,
+                empresa.cidade,
+                empresa.estado,
+                empresa.cep,
+                empresa.observacao
+            ])
+        }]);
+    } catch (error) {
+        console.error("Erro ao exportar relatório de empresas:", error);
+        showToast(error.message || "Erro ao exportar relatório de empresas.", "danger");
+    }
+}
+
 // Criar ou editar empresas
 async function salvarEmpresa(event) {
     event.preventDefault();
